@@ -37,3 +37,31 @@ def delete_categori(request,slug):
         return Response({'status':'Kitap silindi'},status=status.HTTP_200_OK)
     except BookCategori.DoesNotExist:
         return Response({'status':'Kitap Silinemedi'},status=status.HTTP_401_UNAUTHORIZED)
+    
+
+@api_view(['PATCH'])
+def patch_categori(request, slug):
+    """
+    POST JSON Örneği:\n
+    {
+        "book_categori":str,
+        "categori_isActive":bool
+    }
+    """
+    try:
+        instance = BookCategori.objects.get(slug=slug)
+
+        serializer = KategoriSerializer(
+            instance,
+            data=request.data,
+            partial=True
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=200)
+
+        return Response(serializer.errors, status=400)
+
+    except BookCategori.DoesNotExist:
+        return Response({'error': 'Kategori bulunamadı'}, status=404)
