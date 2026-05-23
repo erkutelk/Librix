@@ -11,3 +11,5 @@ def liste(request):
     menu = UserInfo.objects.all()
     serializer = UserSerializer(menu, many=True)
     return Response(serializer.data)
+
+
