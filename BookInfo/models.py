@@ -15,9 +15,7 @@ class BookCategori(models.Model):
     categori_isActive = models.BooleanField(default=True)
 
     def save(self, *args, **kwargs):
-        if not self.slug:
-            text = unidecode(self.book_categori) 
-            self.slug = slugify(text)
+        self.slug = slugify(self.book_categori)
         super().save(*args, **kwargs)
 
     def __str__(self):
