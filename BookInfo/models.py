@@ -16,7 +16,7 @@ class BookCategori(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            text = unidecode(self.book_categori)   # Türkçe → ASCII çevir
+            text = unidecode(self.book_categori) 
             self.slug = slugify(text)
         super().save(*args, **kwargs)
 
