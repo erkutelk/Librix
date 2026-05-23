@@ -28,3 +28,12 @@ def insert_categori(request):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
     return Response({'hata':f'Masa eklenirken hata meydana geldi{serializer.data}'},status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['DELETE'])
+def delete_categori(request,slug):
+    try:
+        book_categori=BookCategori.objects.get(slug=slug)
+        book_categori.delete()
+        return Response({'status':'Kitap silindi'},status=status.HTTP_200_OK)
+    except BookCategori.DoesNotExist:
+        return Response({'status':'Kitap Silinemedi'},status=status.HTTP_401_UNAUTHORIZED)
