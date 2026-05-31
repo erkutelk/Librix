@@ -13,6 +13,16 @@ def all_categori(request):
     serializer = KategoriSerializer(menu, many=True)
     return Response(serializer.data)
 
+@api_view(['GET'])
+def get_categori(request,slug):
+    try:
+        kategori = BookCategori.objects.get(slug=slug)
+        serializer = KategoriSerializer(kategori)
+        return Response(serializer.data)
+    except BookCategori.DoesNotExist:
+        return Response({"message":"Kategori Bulunamadı"},
+                        status=404)
+
 @api_view(['POST'])
 def insert_categori(request):
     """
@@ -25,19 +35,31 @@ def insert_categori(request):
     serializer=KategoriSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    
-    return Response({'hata':f'Masa eklenirken hata meydana geldi{serializer.data}'},status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "status":"Basariyla Eklendi",
+                "data": serializer.data
+            },
+            status=status.HTTP_201_CREATED
+        )    
+    return Response(
+        {
+            'status': serializer.errors
+        },
+        status=status.HTTP_400_BAD_REQUEST
+    )
+
+from rest_framework.exceptions import NotFound
 
 @api_view(['DELETE'])
-def delete_categori(request,slug):
+def delete_categori(request, slug):
     try:
-        book_categori=BookCategori.objects.get(slug=slug)
-        book_categori.delete()
-        return Response({'status':'Kitap silindi'},status=status.HTTP_200_OK)
+        book_categori = BookCategori.objects.get(slug=slug)
     except BookCategori.DoesNotExist:
-        return Response({'status':'Kitap Silinemedi'},status=status.HTTP_401_UNAUTHORIZED)
-    
+        raise NotFound({'status':'Kategori bulunamadı'})
+    book_categori.delete()
+
+    return Response({'message': 'Kategori silindi'})
 
 @api_view(['PATCH'])
 def patch_categori(request, slug):
@@ -59,9 +81,12 @@ def patch_categori(request, slug):
 
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=200)
+            return Response({'status':'Başarılı bir şekilde güncelleme işlemi tamamlandı',
+                             'data':serializer.data}, status=200)
 
-        return Response(serializer.errors, status=400)
+        return Response({'status':'Güncelleme sırasında bir hata meydana geldi',
+                        'data': serializer.errors},
+                        status=400)
 
     except BookCategori.DoesNotExist:
         return Response({'error': 'Kategori bulunamadı'}, status=404)
