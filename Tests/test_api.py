@@ -18,7 +18,7 @@ class TestApi:
             }
             url = f"{self.URL}{self.KATEGORI_EKLE}"
             response=requests.post(url=url, json=data)
-            print('Kategori Eklendi')
+            print('Kategori Eklendi',test_value)
             return response
 
         return _create
@@ -54,20 +54,45 @@ class TestApi:
         '''Kategoriye eklenen değer başarıli bir şeklde siliniyor mu?'''
         ekle=create_category("erkut")
         response = delete_category("erkut")
-
         print('Eklenen değer',ekle.status_code)
         print('silinen değer',response.status_code)
         assert response.status_code in [201,200]
 
-    def test_ayni_kategoriyi_tekrar_ekleme(self,create_category):
+    def test_ayni_kategoriyi_tekrar_ekleme(self,create_category,delete_category):
         '''Kategoyiye aynı isimde bir kategori ekleme'''
         first_value=create_category('erkut')
         last_value=create_category('erkut')
-
-        assert last_value.json()['status']['book_categori'][0]=="Aynı kategori adında bir kategori mevcut"
+        assert last_value.json()['error']['book_categori'][0]=="Aynı kategori adında bir kategori mevcut"
+        assert last_value.status_code==400
+        delete=delete_category('erkut')
 
     def test_olmayan_kategoriyi_silme(self,delete_category):
         '''Eğer bir kategori mevcut olmadığı halde silmeye çalışırsa kullanıcı bu hatayı versin'''
         last_value=delete_category('olmaayan_deger')
         assert last_value.json()['status']=='Kategori bulunamadı'
         assert last_value.status_code==404
+
+    @pytest.mark.parametrize('kategori_name,' \
+    'is_active,' \
+    'expected_status,' \
+    'mesaj', [
+        ('isim', True, 201,'Basariyla Eklendi'),
+        ('deneme', True, 201,'Basariyla Eklendi'),
+        ('',True,400,'Bu alan boş bırakılmamalı.'),
+        ('    ',True,400,'Bu alan boş bırakılmamalı.')
+    ])
+    def test_kategori_ekle_coklu(self,kategori_name,is_active,expected_status,mesaj,create_category,delete_category):
+        response=create_category(kategori_name)
+        body=response.json()
+        # assert response.json()==mesaj
+
+        if response.status_code==201:
+            assert "data" in body
+            assert body['status']==mesaj
+        else:
+            assert "error" in body
+            assert body['error']['book_categori'][0]==mesaj
+            
+        
+        # delete_category(kategori_name)
+        # assert kategori_name==response.json()['error']['book_categori'][0]

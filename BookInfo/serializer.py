@@ -7,14 +7,13 @@ class KategoriSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def validate_book_categori(self,value):
-        if not value.strip():
+        value=value.strip()
+
+        if not value:
             raise serializers.ValidationError("Bu alan boş bırakılmamalı.")
         
-        if BookCategori.objects.filter(book_categori=value):
-            raise serializers.ValidationError('Aynı kategori adında bir kategori mevcut')
-        
         if BookCategori.objects.filter(book_categori=value).exists():
-            raise serializers.ValidationError('Böyle bir kategori me')
+            raise serializers.ValidationError('Aynı kategori adında bir kategori mevcut')
 
         return value
 class KitapInfoSerializer(serializers.ModelSerializer):
