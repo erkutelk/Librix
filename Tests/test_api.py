@@ -28,7 +28,6 @@ class TestApi:
         def _delete(test_value):
             url = f"{self.URL}{self.KATEGOR_SIL}{test_value}/"
             response = requests.delete(url)
-            print('Kategori Silindi')
             return response
 
         return _delete
@@ -89,10 +88,17 @@ class TestApi:
         if response.status_code==201:
             assert "data" in body
             assert body['status']==mesaj
+            delete_category(kategori_name)
         else:
             assert "error" in body
             assert body['error']['book_categori'][0]==mesaj
+            delete_category(kategori_name)
             
         
         # delete_category(kategori_name)
         # assert kategori_name==response.json()['error']['book_categori'][0]
+
+    def test_kategori_ekle_emoji_kontrol(self,create_category):
+        response=create_category('😊😊😊😊😊🙋‍♂️🙋‍♂️🙋‍♂️')
+        assert response.json()['error']['book_categori'][0]=='Kategori emojilerden oluşamaz'
+        assert response.status_code==400

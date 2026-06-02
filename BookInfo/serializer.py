@@ -7,7 +7,8 @@ class KategoriSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def validate_book_categori(self,value):
-        value=value.strip()
+        import re
+        value = value.strip()
 
         if not value:
             raise serializers.ValidationError("Bu alan boş bırakılmamalı.")
@@ -15,7 +16,11 @@ class KategoriSerializer(serializers.ModelSerializer):
         if BookCategori.objects.filter(book_categori=value).exists():
             raise serializers.ValidationError('Aynı kategori adında bir kategori mevcut')
 
+        if not re.search(r'[a-zA-Z0-9çğıöşüÇĞİÖŞÜ]', value):
+            raise serializers.ValidationError("Kategori emojilerden oluşamaz") 
+        
         return value
+        
 class KitapInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model=BookInfo
