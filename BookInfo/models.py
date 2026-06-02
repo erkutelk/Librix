@@ -15,7 +15,7 @@ class BookCategori(models.Model):
     categori_isActive = models.BooleanField(default=True)
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.book_categori)
+        self.slug = slugify(unidecode(self.book_categori))
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -24,9 +24,13 @@ class BookCategori(models.Model):
 
 class BookInfo(models.Model):
     book_name=models.CharField(max_length=100)
+    book_slug=models.SlugField(unique=True,blank=True)
     barcode=models.CharField(max_length=12,unique=True)
     price=models.FloatField()
     writer=models.CharField(max_length=70)
     kategori = models.ForeignKey(BookCategori, on_delete=models.CASCADE)
 
+    def save(self, *args, **kwargs):
+        self.book_slug = slugify(unidecode(self.book_name))
+        super().save(*args, **kwargs)
 # Create your models here.

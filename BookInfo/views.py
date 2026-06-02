@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view
 from .serializer import KategoriSerializer,KitapInfoSerializer
 from rest_framework.response import Response
-from .models import BookCategori
+from .models import BookCategori,BookInfo
 from rest_framework import status
 
 # Create your views here.
@@ -90,3 +90,51 @@ def patch_categori(request, slug):
 
     except BookCategori.DoesNotExist:
         return Response({'error': 'Kategori bulunamadı'}, status=404)
+    
+
+
+@api_view(['POST'])
+def kitap_ekle(request):
+    """
+    {
+        "book_name":"str", 
+        "barcode":"str", 
+        "price":float, 
+        "writer":"str", 
+        "kategori":int
+    }"""
+    serializer = KitapInfoSerializer(data=request.data)
+
+    if serializer.is_valid():
+        serializer.save()
+        return Response({
+            "status": "Başarıyla yeni kitap eklendi",
+            "data": serializer.data
+        }, status=status.HTTP_201_CREATED)
+
+    return Response({
+        'status': 'hata meydana geldi',
+        'errors': serializer.errors
+    }, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['DELETE'])
+def kitap_sil(requset,slug):
+    try:
+        book_categori=BookInfo.objects.get(book_slug=slug)
+    except BookInfo.DoesNotExist:
+        raise NotFound({'status':'Kitap silindi'}) 
+    book_categori.delete()
+
+    return Response({'message':'Kitap silinirken hata meydana geldi'})
+
+@api_view(['GET'])
+def get_info_book(request,slug):
+    try:
+        kategori = BookInfo.objects.get(book_slug=slug)
+        serializer = KitapInfoSerializer(kategori)
+        return Response({'status':'Başarılı bir şekilde eklendi',
+                         'data':serializer.data})
+    except BookInfo.DoesNotExist:
+        return Response({"message":"Kategori Bulunamadı"},
+                        status=404)

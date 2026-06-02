@@ -24,4 +24,4 @@ class KategoriSerializer(serializers.ModelSerializer):
 class KitapInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model=BookInfo
-        fields=['book_name','barcode','price','writer','kategori']
+        fields=['book_slug','book_name','barcode','price','writer','kategori']
