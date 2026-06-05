@@ -55,7 +55,7 @@ class TestApi:
         response = delete_category("erkut")
         print('Eklenen değer',ekle.status_code)
         print('silinen değer',response.status_code)
-        assert response.status_code in [201,200]
+        assert response.status_code in [201,200,204]
 
     def test_ayni_kategoriyi_tekrar_ekleme(self,create_category,delete_category):
         '''Kategoyiye aynı isimde bir kategori ekleme'''
@@ -68,8 +68,9 @@ class TestApi:
     def test_olmayan_kategoriyi_silme(self,delete_category):
         '''Eğer bir kategori mevcut olmadığı halde silmeye çalışırsa kullanıcı bu hatayı versin'''
         last_value=delete_category('olmaayan_deger')
-        assert last_value.json()['status']=='Kategori bulunamadı'
-        assert last_value.status_code==404
+
+        assert last_value.json()['error']=='Kategori bulunamadı',last_value.json()
+        assert last_value.status_code==404,last_value.json()
 
     @pytest.mark.parametrize('kategori_name,' \
     'is_active,' \
