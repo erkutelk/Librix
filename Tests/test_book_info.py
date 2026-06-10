@@ -15,13 +15,14 @@ class TestBookInfo:
     def create_book_info(self):
         "Yeni kitap oluşturma fixture"
         import random
-        def _create(book_name="test123",barcode=random.randint(1000,9999),price=12,write="Kitap yazarı test",kategori=1):
+        def _create(book_name="test123",barcode=random.randint(1000,9999),price=12,write="Kitap yazarı test",kategori=1,stock=1):
             data = {
                 "book_name": book_name,
                 "barcode": f'1231{barcode}',
                 "price": price,
                 "writer": write,
-                "kategori": kategori
+                "kategori": kategori,
+                "stock":1
             }
             try:
                 response = requests.post(url=TestBookInfo.GET_POST,json=data)

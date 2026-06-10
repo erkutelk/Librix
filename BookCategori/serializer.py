@@ -1,10 +1,10 @@
 from rest_framework import serializers
-from .models import BookCategori,BookInfo
+from .models import BookCategori
 
 class KategoriSerializer(serializers.ModelSerializer):
     class Meta:
         model = BookCategori
-        fields = '__all__'
+        fields = ['book_categori']
 
     def get_kategori(self, obj):
         return obj.kategori.book_categori
@@ -24,11 +24,3 @@ class KategoriSerializer(serializers.ModelSerializer):
         
         return value
         
-class KitapInfoSerializer(serializers.ModelSerializer):
-    kategori = serializers.SerializerMethodField()
-
-    class Meta:
-        model = BookInfo
-        fields = ["id", "book_name", "kategori"]
-    def get_kategori(self, obj):
-        return obj.kategori.book_categori

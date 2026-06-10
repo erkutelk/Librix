@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'User',
     'BookInfo',
+    'OduncAlmaSistemi',
+    'BookCategori'
 ]
 
 MIDDLEWARE = [
