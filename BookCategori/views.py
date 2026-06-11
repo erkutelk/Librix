@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
-from .serializer import KategoriSerializer
+from .serializer import KategoriSerializer_list,KategoriSerializer_create
 from rest_framework.response import Response
-from .serializer import BookCategori
+from .models import BookCategori
 from rest_framework import status
 from django.db.models import Q
 # Create your views here.
@@ -10,14 +10,14 @@ from django.db.models import Q
 @api_view(['GET'])
 def all_categori(request):
     menu = BookCategori.objects.all()
-    serializer = KategoriSerializer(menu, many=True)
+    serializer = KategoriSerializer_list(menu, many=True)
     return Response(serializer.data)
 
 @api_view(['GET'])
 def get_categori(request,slug):
     try:
         kategori = BookCategori.objects.get(slug=slug)
-        serializer = KategoriSerializer(kategori)
+        serializer = KategoriSerializer_list(kategori)
         return Response(serializer.data)
     except BookCategori.DoesNotExist:
         return Response({"message":"Kategori Bulunamadı"},
@@ -32,7 +32,7 @@ def insert_categori(request):
         "categori_isActive":bool
     }
     """
-    serializer=KategoriSerializer(data=request.data)
+    serializer=KategoriSerializer_create(data=request.data)
     if serializer.is_valid():
         serializer.save()
         return Response(
@@ -78,7 +78,7 @@ def patch_categori(request, slug):
     try:
         instance = BookCategori.objects.get(slug=slug)
 
-        serializer = KategoriSerializer(
+        serializer = KategoriSerializer_create(
             instance,
             data=request.data,
             partial=True

@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
-from .serializer import KitapInfoSerializer
+from .serializer import KitapInfoSerializer_create,KitapInfoSerializer_list
 from rest_framework.response import Response
 from .models import BookCategori,BookInfo
 from rest_framework import status
@@ -18,7 +18,7 @@ def kitap_ekle(request):
         "writer":"str", 
         "kategori":int
     }"""
-    serializer = KitapInfoSerializer(data=request.data)
+    serializer = KitapInfoSerializer_create(data=request.data)
 
     if serializer.is_valid():
         serializer.save()
@@ -54,9 +54,8 @@ def kitap_sil(request, slug):
 def get_info_book(request,slug):
     try:
         kategori = BookInfo.objects.get(book_slug=slug)
-        serializer = KitapInfoSerializer(kategori)
-        return Response({'status':'Başarılı bir şekilde eklendi',
-                         'data':serializer.data})
+        serializer = KitapInfoSerializer_list(kategori)
+        return Response({'data':serializer.data})
     except BookInfo.DoesNotExist:
         return Response({"message":"Kategori Bulunamadı"},
                         status=404)
@@ -66,7 +65,7 @@ def get_info_book(request,slug):
 def get_guncelleme(request,slug):
     try:
         instance=BookInfo.objects.get(book_slug=slug)
-        serializer=KitapInfoSerializer(instance,data=request.data,partial=True)
+        serializer=KitapInfoSerializer_create(instance,data=request.data,partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response({'status':'Güncelleme işlemi tamamlandı',
@@ -81,7 +80,7 @@ def get_guncelleme(request,slug):
 def get_all(request):
     menu=BookInfo.objects.all()
     try:
-        serializer = KitapInfoSerializer(menu, many=True)
+        serializer = KitapInfoSerializer_list(menu, many=True)
         return Response({'status':'Tüm kitap bilgileri','data':serializer.data})
     except:
         return Response({'status':'Kitap bilgileri getirilirke hata meydana geldi'},status=status.HTTP_204_NO_CONTENT)
@@ -96,7 +95,7 @@ def get_search(request, name):
     )
 
     if kitaplar.exists():
-        serializer = KitapInfoSerializer(kitaplar, many=True)
+        serializer = KitapInfoSerializer_list(kitaplar, many=True)
         return Response({'status':'başarıyla bulundu',
                         'data':serializer.data},
                         status=status.HTTP_302_FOUND)

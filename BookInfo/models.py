@@ -13,6 +13,7 @@ class BookInfo(models.Model):
     price=models.FloatField(null=True,blank=True)
     writer=models.CharField(max_length=70)
     kategori = models.ForeignKey(BookCategori, on_delete=models.CASCADE)
+    stock=models.IntegerField(default=1,blank=True)
 
     def save(self, *args, **kwargs):
         self.book_slug = slugify(unidecode(self.book_name))
