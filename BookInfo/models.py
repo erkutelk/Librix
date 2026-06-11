@@ -1,9 +1,5 @@
 from django.db import models
 from django.utils.text import slugify
-
-
-
-
 from django.db import models
 from django.utils.text import slugify
 from unidecode import unidecode

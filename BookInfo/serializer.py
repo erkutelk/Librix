@@ -1,34 +1,7 @@
 from rest_framework import serializers
 from .models import BookCategori,BookInfo
-
-class KategoriSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = BookCategori
-        fields = '__all__'
-
-    def get_kategori(self, obj):
-        return obj.kategori.book_categori
-    
-    def validate_book_categori(self,value):
-        import re
-        value = value.strip()
-
-        if not value:
-            raise serializers.ValidationError("Bu alan boş bırakılmamalı.")
-        
-        if BookCategori.objects.filter(book_categori=value).exists():
-            raise serializers.ValidationError('Aynı kategori adında bir kategori mevcut')
-
-        if not re.search(r'[a-zA-Z0-9çğıöşüÇĞİÖŞÜ]', value):
-            raise serializers.ValidationError("Kategori emojilerden oluşamaz") 
-        
-        return value
         
 class KitapInfoSerializer(serializers.ModelSerializer):
-    kategori = serializers.SerializerMethodField()
-
     class Meta:
         model = BookInfo
-        fields = ["id", "book_name", "kategori"]
-    def get_kategori(self, obj):
-        return obj.kategori.book_categori
+        fields = "__all__"
