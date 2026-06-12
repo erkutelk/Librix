@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from .models import Writer
 from rest_framework.decorators import api_view
-from .serializer import WriterBookSerializer_list
+from .serializer import WriterBookSerializer_list,WriterUpdateSerializer_create
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -17,7 +17,7 @@ def get(request):
 
 @api_view(['POST'])
 def add(request):
-    serializer=WriterBookSerializer_list(data=request.data)
+    serializer=WriterUpdateSerializer_create(data=request.data)
 
     if serializer.is_valid():
         serializer.save()
@@ -38,19 +38,31 @@ def delete(request,id):
 
 @api_view(['PATCH'])
 def update(request,id):
+    bookWriteUpdate=Writer.objects.get(pk=id)
     """
     {
         "name": "str",
         "surname": "str",
         "isActive": bool,
-        "dateAdd": "2026-06-12T00:59:33.754593Z"
     }
     """
-    bookWriteUpdate=Writer.objects.get(pk=id)
+    try:
+        serializer=WriterBookSerializer_list(bookWriteUpdate,data=request.data,partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"status":"Güncellendi",
+                            "data":serializer.data})
+    except Writer.DoesNotExist:
+        return Response({"status":"Hata meydana geldi",
+                     "erorr":serializer.error_messages})
 
-    serializer=WriterBookSerializer_list(bookWriteUpdate,data=request.data,partial=True)
+@api_view(['GET'])
+def get_first(request,id):
+    try:
+        models_firs=Writer.objects.get(pk=id)
 
-    if serializer.is_valid():
-        serializer.save()
-        return Response({"status":"Güncellendi",
-                         "data":serializer.data})
+    except Writer.DoesNotExist:
+        return Response({"Error":"Kategori bulunamadı"},status=401)
+    
+    serializer=WriterBookSerializer_list(models_firs)
+    return Response({'data':serializer.data})

@@ -8,3 +8,7 @@ class WriterBookSerializer_list(serializers.ModelSerializer):
         read_only_fields = ["dateAdd"]
 
 
+class WriterUpdateSerializer_create(serializers.ModelSerializer):
+    class Meta:
+        model = Writer
+        fields = ["name", "surname", "isActive","dateAdd"]
