@@ -4,6 +4,7 @@ from django.db import models
 from django.utils.text import slugify
 from unidecode import unidecode
 from BookCategori.models import BookCategori
+from WriterBook.models import Writer
 
 
 class BookInfo(models.Model):
@@ -11,7 +12,7 @@ class BookInfo(models.Model):
     book_slug=models.SlugField(unique=True,blank=True)
     barcode=models.CharField(max_length=12,unique=True)
     price=models.FloatField(null=True,blank=True)
-    writer=models.CharField(max_length=70)
+    writer_book=models.ForeignKey(Writer,on_delete=models.CASCADE)
     kategori = models.ForeignKey(BookCategori, on_delete=models.CASCADE)
     stock=models.IntegerField(default=1,blank=True)
 

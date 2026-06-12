@@ -7,4 +7,5 @@ urlpatterns = [
     path('book-info/',include('BookInfo.urls')),
     path('odunc/',include('OduncAlmaSistemi.urls')),
     path('book-categori/',include('BookCategori.urls')),
+    path('writers/',include('WriterBook.urls')),
 ]

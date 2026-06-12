@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'User',
     'BookInfo',
     'OduncAlmaSistemi',
-    'BookCategori'
+    'BookCategori',
+    'WriterBook'
 ]
 
 MIDDLEWARE = [
