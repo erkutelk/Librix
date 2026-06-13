@@ -17,3 +17,22 @@ def odunc_first_id(request,id):
     models_odunc=OduncAlmaSistemi.objects.get(pk=id)
     deger=OduncAlmaSistemiSeriazlier_list(models_odunc)
     return Response({'status':"true",'data':deger.data})
+
+@api_view(['PATCH'])
+def odunc_alma_guncelleme(request, id):
+    obj = OduncAlmaSistemi.objects.get(id=id)
+
+    serializer = OduncAlmaSistemiSeriazlier_list(
+        obj,
+        data=request.data,
+        partial=True
+    )
+
+    if serializer.is_valid():
+        serializer.save()
+        return Response({
+            "mesaj": "Güncellendi",
+            "data": serializer.data
+        })
+
+    return Response(serializer.errors)
