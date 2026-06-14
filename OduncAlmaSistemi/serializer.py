@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import OduncAlmaSistemi
 from User.serializer import UserSerializer
-from BookInfo.serializer import KitapInfoSerializer_list
+from Book.serializer import KitapInfoSerializer_list
 
 
 class OduncAlmaSistemiSeriazlier_list(serializers.ModelSerializer):

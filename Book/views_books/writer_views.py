@@ -1,7 +1,7 @@
 from django.shortcuts import render
-from .models import Writer
+from Book.models import Writer
 from rest_framework.decorators import api_view
-from .serializer import WriterBookSerializer_list,WriterUpdateSerializer_create
+from Book.serializer import WriterBookSerializer_list,WriterUpdateSerializer_create
 from rest_framework.response import Response
 from rest_framework import status
 

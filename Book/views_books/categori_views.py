@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
-from .serializer import KategoriSerializer_list,KategoriSerializer_create
+from Book.serializer import KategoriSerializer_list,KategoriSerializer_create
 from rest_framework.response import Response
-from .models import BookCategori
+from Book.models import BookCategori
 from rest_framework import status
 from django.db.models import Q
 # Create your views here.

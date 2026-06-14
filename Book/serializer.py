@@ -1,4 +1,37 @@
 from rest_framework import serializers
+from .models import BookCategori,BookInfo,Writer
+        
+class KitapInfoSerializer_create(serializers.ModelSerializer):
+    class Meta:
+        model = BookInfo
+        fields = ["book_name","barcode","price","writer_book","kategori","stock"]
+
+
+
+class KitapInfoSerializer_list(serializers.ModelSerializer):
+    kategori = serializers.CharField(source="kategori.book_categori")
+
+    class Meta:
+        model = BookInfo
+        fields = ["book_name","barcode","kategori"]
+
+from rest_framework import serializers
+from .models import Writer
+        
+class WriterBookSerializer_list(serializers.ModelSerializer):
+    class Meta:
+        model = Writer
+        fields = ["name","surname","isActive","dateAdd"]
+        read_only_fields = ["dateAdd"]
+
+
+class WriterUpdateSerializer_create(serializers.ModelSerializer):
+    class Meta:
+        model = Writer
+        fields = ["name", "surname", "isActive","dateAdd"]
+
+
+from rest_framework import serializers
 from .models import BookCategori
 
 class KategoriSerializer_list(serializers.ModelSerializer):

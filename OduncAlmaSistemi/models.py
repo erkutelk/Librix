@@ -1,6 +1,6 @@
 from django.db import models
 from User.models import UserInfo
-from BookInfo.models import BookInfo,BookCategori
+from Book.models import BookInfo,BookCategori
 # Create your models here.
 
 class OduncAlmaSistemi(models.Model):
