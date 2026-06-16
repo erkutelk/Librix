@@ -16,7 +16,7 @@ def get(request):
     return Response({"data":serializer.data})
 
 
-@permission_classes([IsAdmin])
+# @permission_classes([IsAdmin])
 @api_view(['POST'])
 def add(request):
     serializer=WriterUpdateSerializer_create(data=request.data)

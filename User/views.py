@@ -31,7 +31,8 @@ def register(request):
         username=data['username'],
         password=data['password'],
         phone=data.get('phone'),
-        relative_id_number=data.get('relative_id_number')
+        relative_id_number=data.get('relative_id_number'),
+        role=data.get('role', 'user')
     )
 
     return Response({"message": "Kullanıcı oluşturuldu"})
@@ -52,12 +53,6 @@ def liste(request):
 
     return Response(data)
 
-@api_view(['GET'])
-@permission_classes([IsAdmin])
-def liste(request):
-    menu = UserInfo.objects.all()
-    serializer = UserSerializer(menu, many=True)
-    return Response(serializer.data)
 
 
 @api_view(['PATCH'])
@@ -67,3 +62,18 @@ def deactive_user(request,id):
     user.is_active=False
     user.save()
     return Response({'status':'Kullanıcı pasif hale getirildi'})
+
+
+@api_view(['POST'])
+@permission_classes([IsAdmin])
+def create_user_by_admin(request):
+    data = request.data
+
+    user = User.objects.create_user(
+        username=data['username'],
+        password=data['password'],
+        phone=data.get('phone'),
+        relative_id_number=data.get('relative_id_number'),
+        role=data.get('role', 'user')
+    )
+    return Response({"message": "Admin kullanıcı oluşturdu"})
