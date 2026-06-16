@@ -60,3 +60,10 @@ def liste(request):
     return Response(serializer.data)
 
 
+@api_view(['PATCH'])
+@permission_classes([IsAdmin])
+def deactive_user(request,id):
+    user=UserInfo.objects.get(pk=id)
+    user.is_active=False
+    user.save()
+    return Response({'status':'Kullanıcı pasif hale getirildi'})
