@@ -4,8 +4,9 @@ from rest_framework.decorators import api_view
 from Book.serializer import WriterBookSerializer_list,WriterUpdateSerializer_create
 from rest_framework.response import Response
 from rest_framework import status
-
-
+from User.permissions import BasePermission
+from rest_framework.decorators import api_view, permission_classes
+from User.permissions import IsAdmin 
 # Create your views here.
 
 @api_view(['GET'])
@@ -15,6 +16,7 @@ def get(request):
     return Response({"data":serializer.data})
 
 
+@permission_classes([IsAdmin])
 @api_view(['POST'])
 def add(request):
     serializer=WriterUpdateSerializer_create(data=request.data)

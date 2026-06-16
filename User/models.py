@@ -1,12 +1,15 @@
-from django.db import models
+from django.contrib.auth.models import AbstractUser
 from phonenumber_field.modelfields import PhoneNumberField
+from django.db import models
 
-class UserInfo(models.Model):
-    name = models.CharField(max_length=20)
-    surname = models.CharField(max_length=20)
-    phone = PhoneNumberField(unique=True) 
-    date_added = models.DateTimeField(auto_now_add=True)
+class UserInfo(AbstractUser):
+    phone = PhoneNumberField(unique=True)
     relative_id_number = models.CharField(max_length=11, unique=True)
+    ROLE_CHOICES =[
+        ("admin","Admin"),
+        ("user","user"),
+    ]
+    role=models.CharField(max_length=20,choices=ROLE_CHOICES,default="user")
 
     def __str__(self):
-        return f"{self.name} {self.surname}"
+        return self.username

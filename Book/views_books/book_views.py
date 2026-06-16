@@ -6,9 +6,13 @@ from Book.models import BookCategori,BookInfo
 from rest_framework import status
 from django.db.models import Q
 # Create your views here.
+from User.permissions import IsAdmin
+from rest_framework.decorators import api_view, permission_classes
+
 
 
 @api_view(['POST'])
+@permission_classes([IsAdmin])
 def kitap_ekle(request):
     """
     {
@@ -34,6 +38,7 @@ def kitap_ekle(request):
 
 
 @api_view(['DELETE'])
+@permission_classes([IsAdmin])
 def kitap_sil(request, slug):
     try:
         obj = BookInfo.objects.get(book_slug=slug)
@@ -62,6 +67,7 @@ def get_info_book(request,slug):
     
 
 @api_view(['PATCH'])
+@permission_classes([IsAdmin])
 def get_guncelleme(request,slug):
     try:
         instance=BookInfo.objects.get(book_slug=slug)

@@ -6,7 +6,6 @@ from Book.models import BookInfo,BookCategori
 class OduncAlmaSistemi(models.Model):
     user=models.ForeignKey(UserInfo,on_delete=models.CASCADE)
     book=models.ForeignKey(BookInfo,on_delete=models.CASCADE)
-    kategori=models.ForeignKey(BookCategori,on_delete=models.CASCADE)
 
     aldigiTarih=models.DateField(auto_now_add=True)
     verecegi_tarih=models.DateField()

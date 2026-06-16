@@ -6,14 +6,19 @@ from Book.models import BookCategori
 from rest_framework import status
 from django.db.models import Q
 # Create your views here.
+from rest_framework.decorators import api_view, permission_classes
+
+from User.permissions import IsAdmin
 
 @api_view(['GET'])
+@permission_classes([IsAdmin])
 def all_categori(request):
     menu = BookCategori.objects.all()
     serializer = KategoriSerializer_list(menu, many=True)
     return Response(serializer.data)
 
 @api_view(['GET'])
+@permission_classes([IsAdmin])
 def get_categori(request,slug):
     try:
         kategori = BookCategori.objects.get(slug=slug)
@@ -22,8 +27,9 @@ def get_categori(request,slug):
     except BookCategori.DoesNotExist:
         return Response({"message":"Kategori Bulunamadı"},
                         status=404)
-
+    
 @api_view(['POST'])
+@permission_classes([IsAdmin])
 def insert_categori(request):
     """
     POST JSON Örneği:\n
@@ -52,6 +58,7 @@ def insert_categori(request):
 from rest_framework.exceptions import NotFound
 
 @api_view(['DELETE'])
+@permission_classes([IsAdmin])
 def delete_categori(request, slug):
     try:
         obj = BookCategori.objects.get(slug=slug)
@@ -67,6 +74,7 @@ def delete_categori(request, slug):
         )
 
 @api_view(['PATCH'])
+@permission_classes([IsAdmin])
 def patch_categori(request, slug):
     """
     POST JSON Örneği:\n
