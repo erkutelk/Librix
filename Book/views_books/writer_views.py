@@ -26,16 +26,18 @@ def add(request):
         return Response({"status":"Başarıyla yeni yazar eklendi",
                          "data":serializer.data},status=201)
     
-    return Response({"status":"hata meydana geldi",
-                     "errors":serializer.errors},status=status.HTTP_404_NOT_FOUND)
+    return Response({"errors":serializer.errors},status=status.HTTP_404_NOT_FOUND)
 
 
 @api_view(['DELETE'])
-def delete(request,id):
-    bookWriterDelete=Writer.objects.get(pk=id)
-    bookWriterDelete.delete()
-    return Response({"data":"başarılı bir şekilde silindi",
-                     "da":bookWriterDelete.name})
+def delete(request, id):
+    try:
+        writer = Writer.objects.get(pk=id)
+        writer.delete()
+        return Response({"status": "silindi"}, status=200)
+
+    except Writer.DoesNotExist:
+        return Response({"error": "bulunamadı"}, status=404)
 
 
 @api_view(['PATCH'])
