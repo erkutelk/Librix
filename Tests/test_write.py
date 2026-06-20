@@ -6,7 +6,7 @@ class TestWrite:
     GET_ID=f'writer/get/{"<int:id>"}'
     ADD_POST='writer/add/'
     DELETE_METHOD='writer/delete/'
-    PATCH_METHOD='writer/update/<int:id>/'
+    PATCH_METHOD='writer/update/'
 
     @pytest.fixture
     def add_method(self):
@@ -76,14 +76,38 @@ class TestWrite:
             assert response_errors["non_field_errors"] == erorrs["errors"]["non_field_errors"]
 
     def test_eklenen_yazar_silme(self,add_method,delete_method):
-        ekle=add_method('Erkut','Elik',True)
+        ekle=add_method('Erkuttt deneme','Elik deneme',True)
         response=ekle.json()
         data=response['data']
-        
-        assert data['name']=="Erkut"
-        assert data['surname']=="Elik"
+        print(data)
+        assert data['name']=="Erkuttt deneme"
+        assert data['surname']=="Elik deneme"
         assert data['isActive']==True
         assert data['dateAdd']==data['dateAdd']
 
         delete_=delete_method(data['id'])
-        assert delete_.json()['status']=='silindi',delete_.json()
+
+        delete_id=delete_.json()['status']
+        assert delete_id=='silindi',delete_.json()
+
+
+    @pytest.mark.parametrize("isim,soyisim,durum",[
+        ('Erkut','Elik',True),
+        ])
+    def test_eklenen_veriyi_guncelleme(self,add_method,delete_method,isim,soyisim,durum):
+        import random
+        insert_value=add_method(isim,soyisim,durum)
+        try:
+            response_id=insert_value.json()['data']
+            id_=response_id['id']
+            url = f"{self.BASE}{self.PATCH_METHOD}{id_}/"
+            data={'name':f'Değiştirildi{random.randint(1,9999)}'}
+            update_response=requests.patch(url,json=data)
+            print(update_response.json())
+        
+        except:
+            response_id=insert_value.json()
+            print(response_id,'Hatası meydana geldi.')
+
+
+

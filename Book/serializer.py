@@ -19,6 +19,26 @@ from rest_framework import serializers
 from .models import Writer
         
 class WriterBookSerializer_list(serializers.ModelSerializer):
+    def validate(self, attrs):# iki adet değeri kontrol ettiğim için alan belirtmiyoruz.
+        import re
+
+        name = attrs.get("name", "")
+        surname = attrs.get("surname", "")
+
+        if Writer.objects.filter(name=name, surname=surname).exists():
+            raise serializers.ValidationError("Bu kayıt zaten var")
+
+        if not name.strip() or not surname.strip():
+            raise serializers.ValidationError("Bu alan boş bırakılmamalı")
+
+        if len(name.strip()) <= 1 or len(surname.strip()) <= 1:
+            raise serializers.ValidationError("Karakter sayısı en az 2 olmalı")
+
+        if not re.search(r"[a-zA-Z0-9çğıöşüÇĞİÖŞÜ]", name) or not re.search(r"[a-zA-Z0-9çğıöşüÇĞİÖŞÜ]", surname):
+            raise serializers.ValidationError("Emoji kabul edilmez")
+
+        return attrs
+
     class Meta:
         model = Writer
         fields = ["name","surname","isActive","dateAdd"]
