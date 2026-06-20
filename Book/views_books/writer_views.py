@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from Book.models import Writer
 from rest_framework.decorators import api_view
-from Book.serializer import WriterBookSerializer_list,WriterUpdateSerializer_create
+from Book.serializer import WriterBookSerializer_list,WriterUpdateSerializer_create,WriterUpdateSerializer_update
 from rest_framework.response import Response
 from rest_framework import status
 from User.permissions import BasePermission
@@ -41,24 +41,27 @@ def delete(request, id):
 
 
 @api_view(['PATCH'])
-def update(request,id):
-    bookWriteUpdate=Writer.objects.get(pk=id)
-    """
-    {
-        "name": "str",
-        "surname": "str",
-        "isActive": bool,
-    }
-    """
+def update(request, id):
     try:
-        serializer=WriterBookSerializer_list(bookWriteUpdate,data=request.data,partial=True)
+        bookWriteUpdate = Writer.objects.get(pk=id)
+
+        serializer = WriterUpdateSerializer_update(
+            bookWriteUpdate,
+            data=request.data,
+            partial=True
+        )
+
         if serializer.is_valid():
             serializer.save()
-            return Response({"status":"Güncellendi",
-                            "data":serializer.data})
+            return Response({
+                "status": "Güncellendi",
+                "data": serializer.data
+            }, status=200)
+
+        return Response({"errors": serializer.errors}, status=400)
+
     except Writer.DoesNotExist:
-        return Response({"status":"Hata meydana geldi",
-                     "erorr":serializer.error_messages})
+        return Response({"status": "bulunamadı"}, status=404)
 
 @api_view(['GET'])
 def get_first(request,id):

@@ -2,11 +2,11 @@ import pytest
 import requests
 class TestWrite:
     BASE="http://127.0.0.1:8000/"
-    GET_ALL='writer/'
-    GET_ID=f'writer/get/{"<int:id>"}'
-    ADD_POST='writer/add/'
-    DELETE_METHOD='writer/delete/'
-    PATCH_METHOD='writer/update/'
+    GET_ALL=f'{BASE}writer/'
+    GET_ID=f'{BASE}writer/get/{"<int:id>"}'
+    ADD_POST=f'{BASE}writer/add/'
+    DELETE_METHOD=f'{BASE}writer/delete/'
+    PATCH_METHOD=f'{BASE}writer/update/'
 
     @pytest.fixture
     def add_method(self):
@@ -16,14 +16,14 @@ class TestWrite:
                 "surname":surname,
                 "isActive":isActive,
             }            
-            response=requests.post(url=f"{self.BASE}{self.ADD_POST}",json=data)
+            response=requests.post(url=f"{self.ADD_POST}",json=data)
             return response
         return create
     
     @pytest.fixture
     def delete_method(self):
         def delete(id):
-            URL=f"{self.BASE}{self.DELETE_METHOD}{id}/"
+            URL=f"{self.DELETE_METHOD}{id}/"
             response=requests.delete(url=URL)
             return response
         return delete
@@ -32,19 +32,24 @@ class TestWrite:
     @pytest.mark.parametrize(
         "name,surname,isActive",
         [
-            ('Erkut','Elik',True),
             ('Namık','Kemal',True),
             ('Orhan','Kemal',True),
             ('Reşat Nuri','Gültekin',True),
             ('Mehmet Akif','Ersoy',True),
         ]
     )
-    def test_yazar_ekleniyor_mu(self, add_method, name, surname, isActive):
-        response = add_method(name, surname, isActive)
-        response_json=response.json()['data']
-        assert response_json['name'] ==name,'name hatası verdi'
-        assert response_json['surname'] == surname,'surname hatası verdi'
-        assert response_json['isActive'] == isActive,'isActive hatası verdi'
+    def test_yazar_ekleniyor_mu(self, add_method, name, surname, isActive,delete_method):
+        try:
+            response = add_method(name, surname, isActive)
+            response_json=response.json()['data']
+            assert response_json['name'] ==name,'name hatası verdi'
+            assert response_json['surname'] == surname,'surname hatası verdi'
+            assert response_json['isActive'] == isActive,'isActive hatası verdi'
+        except Exception as e:
+            print(e,'Hata meydana geldi')
+        finally:
+            writer_id=response_json['id']
+            delete_method(writer_id)
 
 
     @pytest.mark.parametrize(
@@ -90,24 +95,51 @@ class TestWrite:
         delete_id=delete_.json()['status']
         assert delete_id=='silindi',delete_.json()
 
-
-    @pytest.mark.parametrize("isim,soyisim,durum",[
-        ('Erkut','Elik',True),
-        ])
+    @pytest.mark.parametrize("isim,soyisim,durum",[(f'Erkut','Eliksss',True),])
     def test_eklenen_veriyi_guncelleme(self,add_method,delete_method,isim,soyisim,durum):
         import random
         insert_value=add_method(isim,soyisim,durum)
-        try:
-            response_id=insert_value.json()['data']
-            id_=response_id['id']
-            url = f"{self.BASE}{self.PATCH_METHOD}{id_}/"
-            data={'name':f'Değiştirildi{random.randint(1,9999)}'}
-            update_response=requests.patch(url,json=data)
-            print(update_response.json())
-        
-        except:
-            response_id=insert_value.json()
-            print(response_id,'Hatası meydana geldi.')
+        print(insert_value.json())
+        assert insert_value.status_code in (200,201),'veri eklenmedi'
 
+        response=insert_value.json()['data']
+        url = f"{self.PATCH_METHOD}{response['id']}/"
+        random_value=f'Değiştirildi{random.randint(1,9999)}'
+        data={'surname':random_value}
+        update_response=requests.patch(url=url,json=data)
+
+        
+        assert update_response.status_code in (201,200),'veri güncellenmedi'
+        assert update_response.status_code==200,'Güncellemede hata meydana geldi'
+        assert response['name']=='Erkut','name değerinde hata meydana geldi'
+        assert data['surname']==random_value
+        assert response['dateAdd']==update_response.json()['data']['dateAdd'],'dateAdd değerinde hata meydana geldi'
+        assert response['isActive']==True
+        delete_method(response['id'])
+
+
+
+
+    @pytest.mark.parametrize('isim,soyisim,isActive',
+        [
+            ('Erkut TEST','Elik TEST',True),
+            ('Namık TEST','Kemal TEST',True),
+            ('Orhan TEST','Kemal TEST',True),
+            ('Reşat Nuri TEST','Gültekin TEST ',True),
+            ('Mehmet Akif TEST','Ersoy TEST',True),
+        ]
+    )
+    def test_butun_yazarlari_getirme(self,isim,soyisim,isActive,add_method,delete_method):
+        url=f'{self.GET_ALL}'
+        try:
+            add_writer=add_method(isim,soyisim,isActive)
+            response=requests.get(url=url)
+            json_data=add_writer.json()['data']
+        except Exception as e:
+            print('hata meydana geldi',e)
+        finally:
+            assert response.status_code==200,'Bütün yazarlar getiriliken hata meydana geldi'
+            assert len(json_data)==5
+            delete_method(json_data['id'])
 
 
