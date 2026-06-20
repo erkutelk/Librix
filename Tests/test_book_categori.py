@@ -5,9 +5,9 @@ import requests
 class TestApi:
 
     URL = "http://127.0.0.1:8000/book-categori/"
-    KATEGORI_EKLE = "categori-add/"
-    KATEGOR_SIL = "categori-delete/"
-    KATEGORI_GUNCELLE = "categori-update/"
+    KATEGORI_EKLE_URL = f"{URL}categori-add/"
+    KATEGOR_SIL = f"{URL}categori-delete/"
+    KATEGORI_GUNCELLE = f"{URL}categori-update/"
 
     @pytest.fixture
     def create_category(self):
@@ -16,8 +16,7 @@ class TestApi:
                 "book_categori": test_value,
                 "categori_isActive": durum
             }
-            url = f"{self.URL}{self.KATEGORI_EKLE}"
-            response=requests.post(url=url, json=data)
+            response=requests.post(url=self.KATEGORI_EKLE_URL, json=data)
             print('Kategori Eklendi',test_value)
             return response
 
@@ -26,7 +25,7 @@ class TestApi:
     @pytest.fixture
     def delete_category(self):
         def _delete(test_value):
-            url = f"{self.URL}{self.KATEGOR_SIL}{test_value}/"
+            url = f"{self.KATEGOR_SIL}{test_value}/"
             response = requests.delete(url)
             return response
 
@@ -38,7 +37,7 @@ class TestApi:
         create_response=create_category(ornek_veri)
 
         slug_ = create_response.json()
-        url = f"{self.URL}{self.KATEGORI_GUNCELLE}{ornek_veri}/"
+        url = f"{self.KATEGORI_GUNCELLE}{ornek_veri}/"
 
         data = {
             "book_categori": "naberererer"
