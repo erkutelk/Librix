@@ -3,7 +3,7 @@ import requests
 class TestWrite:
     BASE="http://127.0.0.1:8000/"
     GET_ALL=f'{BASE}writer/'
-    GET_ID=f'{BASE}writer/get/{"<int:id>"}'
+    GET_ID=f'{BASE}writer/get/'
     ADD_POST=f'{BASE}writer/add/'
     DELETE_METHOD=f'{BASE}writer/delete/'
     PATCH_METHOD=f'{BASE}writer/update/'
@@ -71,7 +71,6 @@ class TestWrite:
     )
     def test_input_bos_birakiliyor_mu(self,add_method,name,surname,isActive,erorrs):
         response=add_method(name,surname,isActive)
-        print(response.json())
         response_errors = response.json()["errors"]
 
         if "surname" in erorrs["errors"]:
@@ -84,7 +83,6 @@ class TestWrite:
         ekle=add_method('Erkuttt deneme','Elik deneme',True)
         response=ekle.json()
         data=response['data']
-        print(data)
         assert data['name']=="Erkuttt deneme"
         assert data['surname']=="Elik deneme"
         assert data['isActive']==True
@@ -99,7 +97,6 @@ class TestWrite:
     def test_eklenen_veriyi_guncelleme(self,add_method,delete_method,isim,soyisim,durum):
         import random
         insert_value=add_method(isim,soyisim,durum)
-        print(insert_value.json())
         assert insert_value.status_code in (200,201),'veri eklenmedi'
 
         response=insert_value.json()['data']
@@ -142,4 +139,26 @@ class TestWrite:
             assert len(json_data)==5
             delete_method(json_data['id'])
 
+    def test_secilen_yazari_getirme(self,add_method,delete_method):
+        try:
+            create_write=add_method('test_name','test_surname',False)
+            assert create_write.status_code in (200,201),'yazar eklenemedi'
+            insert_data=create_write.json()['data']
 
+            assert insert_data['name']=='test_name'
+            assert insert_data['surname']=='test_surname'
+            assert insert_data['isActive']==False
+            response=requests.get(url=f'{self.GET_ID}{insert_data['id']}')
+        except Exception as e:
+            print(e)
+        finally:
+            delete_method_status=delete_method(insert_data['id'])
+            assert delete_method_status.status_code==200,'Yazar silinirken hata meydana geldi'
+
+    def test_olmayan_yazar_getirme(self):
+        response=requests.get(f'{self.GET_ID}9999')
+        assert response.status_code==401
+        assert response.json()['Error']=='yazar bulunamadı'
+
+
+        

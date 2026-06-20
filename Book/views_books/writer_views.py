@@ -69,7 +69,7 @@ def get_first(request,id):
         models_firs=Writer.objects.get(pk=id)
 
     except Writer.DoesNotExist:
-        return Response({"Error":"Kategori bulunamadı"},status=401)
+        return Response({"Error":"yazar bulunamadı"},status=401)
     
     serializer=WriterBookSerializer_list(models_firs)
     return Response({'data':serializer.data})
