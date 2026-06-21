@@ -13,7 +13,7 @@ urlpatterns = [
     path('book-get/<slug:slug>/',book_views.get_info_book,name='book_get'),
     path('book-update/<slug:slug>/',book_views.get_guncelleme,name='guncelleme'),
     path('book-all/',book_views.get_all,name='book_all'),
-    path('search/<name>',book_views.get_search,name='search'),
+    path('search/<name>/',book_views.get_search,name='search'),
 
     path('writer/',writer_views.get),
     path('writer/get/<int:id>',writer_views.get_first),

@@ -11,7 +11,7 @@ from rest_framework.decorators import api_view, permission_classes
 
 
 
-# @permission_classes([IsAdmin])
+@permission_classes([IsAdmin])
 @api_view(['POST'])
 def kitap_ekle(request):
     """
@@ -83,6 +83,7 @@ def get_guncelleme(request,slug):
 
 
 @api_view(['GET'])
+@permission_classes([IsAdmin])
 def get_all(request):
     menu=BookInfo.objects.all()
     try:
