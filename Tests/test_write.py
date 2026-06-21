@@ -160,5 +160,38 @@ class TestWrite:
         assert response.status_code==401
         assert response.json()['Error']=='yazar bulunamadı'
 
+    def test_olmayan_yazar_guncelleme(self):
+        data={"name":"name_test"}
+        response=requests.patch(url=f'{self.PATCH_METHOD}9999/',json=data)
+        assert response.json()['status']=='bulunamadı','Hata meydana geldi'
+        assert response.status_code==404
+
+    def test_silinen_veriyi_tekrar_silme(self,add_method,delete_method):
+        create_object=add_method('Erkut Test','Elik_test',True)
+        create_object_data=create_object.json()['data']
+
+        delete_first=delete_method(create_object_data['id'])
+        assert create_object.status_code in (200,201),'silinemedi'
+        delete_end=delete_method(create_object_data['id'])
+        assert delete_end.status_code==404
+        
+        
+    def test_sql_injection(self, add_method):
+        response = add_method(
+            "' OR 1=1 --'",
+            "test",
+            True
+        )
+
+        assert response.status_code in (400, 201)
 
         
+    def test_xss_payload_apiyi_cokertmiyor(self, add_method):
+
+        response = add_method(
+            "<script>alert('XSS')</script>",
+            "test",
+            True
+        )
+
+        assert response.status_code != 500
