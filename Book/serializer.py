@@ -4,7 +4,7 @@ from .models import BookCategori,BookInfo,Writer, BookImage
 class BookImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = BookImage
-        fields = ["id", "resim"]
+        fields = ["id", "resim","isActive"]
 
 
 
@@ -49,7 +49,7 @@ class KitapInfoSerializer_list(serializers.ModelSerializer):
     class Meta:
         model = BookInfo
         fields = ["book_name", "barcode", "kategori", "images"]
-        
+
 from rest_framework import serializers
 from .models import Writer
         
