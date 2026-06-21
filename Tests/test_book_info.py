@@ -126,9 +126,14 @@ class TestBookInfo:
 
 
 
-
-
-
+# {
+# "book_name": book_name,
+# "barcode": f'1231{barcode}',
+# "price": price,
+# "kategori": kategori,
+# "stock":1,
+# "writer_book_id":1
+# }
 
 
 

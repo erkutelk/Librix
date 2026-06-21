@@ -1,20 +1,55 @@
 from rest_framework import serializers
-from .models import BookCategori,BookInfo,Writer
-        
+from .models import BookCategori,BookInfo,Writer, BookImage
+
+class BookImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BookImage
+        fields = ["id", "resim"]
+
+
+
 class KitapInfoSerializer_create(serializers.ModelSerializer):
+    images = serializers.ListField(
+        child=serializers.ImageField(),
+        write_only=True,
+        required=False
+    )
+
     class Meta:
         model = BookInfo
-        fields = ["book_name","barcode","price","writer_book","kategori","stock"]
+        fields = [
+            "book_name",
+            "barcode",
+            "price",
+            "writer_book",
+            "kategori",
+            "stock",
+            "images"
+        ]
+
+    def create(self, validated_data):
+        images = validated_data.pop("images", [])
+
+        book = BookInfo.objects.create(**validated_data)
+
+        for image in images:
+            BookImage.objects.create(
+                book=book,
+                resim=image
+            )
+
+        return book
 
 
 
 class KitapInfoSerializer_list(serializers.ModelSerializer):
     kategori = serializers.CharField(source="kategori.book_categori")
+    images = BookImageSerializer(many=True, read_only=True)
 
     class Meta:
         model = BookInfo
-        fields = ["book_name","barcode","kategori"]
-
+        fields = ["book_name", "barcode", "kategori", "images"]
+        
 from rest_framework import serializers
 from .models import Writer
         

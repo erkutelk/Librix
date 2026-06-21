@@ -11,8 +11,8 @@ from rest_framework.decorators import api_view, permission_classes
 
 
 
+# @permission_classes([IsAdmin])
 @api_view(['POST'])
-@permission_classes([IsAdmin])
 def kitap_ekle(request):
     """
     {

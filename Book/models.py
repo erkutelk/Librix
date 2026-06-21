@@ -34,3 +34,13 @@ class BookInfo(models.Model):
     def save(self, *args, **kwargs):
         self.book_slug = slugify(unidecode(self.book_name))
         super().save(*args, **kwargs)
+
+class BookImage(models.Model):
+    book = models.ForeignKey(
+        BookInfo,
+        on_delete=models.CASCADE,
+        related_name="images"
+    )
+
+    resim = models.ImageField(upload_to='Book_image/')
+    isActive = models.BooleanField(default=True)
