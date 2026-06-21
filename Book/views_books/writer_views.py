@@ -8,6 +8,8 @@ from User.permissions import BasePermission
 from rest_framework.decorators import api_view, permission_classes
 from User.permissions import IsAdmin 
 # Create your views here.
+from django.db.models import Q
+
 
 @api_view(['GET'])
 def get(request):
@@ -73,3 +75,18 @@ def get_first(request,id):
     
     serializer=WriterBookSerializer_list(models_firs)
     return Response({'data':serializer.data})
+
+@api_view(['GET'])
+def search(request,name):
+    arama=Writer.objects.filter(Q(name__icontains=name) | Q(surname__icontains=name))
+    if arama.exists():
+        serializer = WriterBookSerializer_list(arama, many=True)
+        return Response({'status':'başarıyla bulundu',
+                        'data':serializer.data,
+                        'Adet':f'{len(serializer.data)} kayıt bulundu',},
+                        status=status.HTTP_302_FOUND)
+    
+    else:
+        return Response({'erorr':'Kitap bulunamadı',
+                         'data':[]},status=status.HTTP_404_NOT_FOUND)
+    

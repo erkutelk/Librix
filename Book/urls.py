@@ -20,4 +20,5 @@ urlpatterns = [
     path('writer/add/',writer_views.add),
     path('writer/delete/<int:id>/',writer_views.delete),
     path('writer/update/<int:id>/',writer_views.update),
+    path('writer/search/<name>/',writer_views.search)
 ]
