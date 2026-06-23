@@ -6,7 +6,7 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('user/',include('User.urls')),
-    path('odunc/',include('OduncAlmaSistemi.urls')),
+    path('',include('OduncAlmaSistemi.urls')),
     path('',include('Book.urls')),
 
 ]

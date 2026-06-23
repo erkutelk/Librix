@@ -10,3 +10,8 @@ class OduncAlmaSistemiSeriazlier_list(serializers.ModelSerializer):
     class Meta:
         model = OduncAlmaSistemi
         fields = ["user", "book","teslim_edildi","verecegi_tarih"]
+
+class OduncAlmaSistemiCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OduncAlmaSistemi
+        fields = ["user", "book", "teslim_edildi", "verecegi_tarih"]

@@ -1,14 +1,9 @@
 from django.shortcuts import render
-from rest_framework.decorators import api_view
 from .models import UserInfo
 from .serializer import UserSerializer
-from rest_framework.response import Response
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAdminUser
-from django.contrib.auth import get_user_model
 from rest_framework.response import Response
 from User.permissions import IsAdmin
 from .serializer import RegisterSerializer
