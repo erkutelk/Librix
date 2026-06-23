@@ -5,15 +5,20 @@ from .models import OduncAlmaSistemi
 from .serializer import OduncAlmaSistemiSeriazlier_list,OduncAlmaSistemiCreateSerializer
 from User.permissions import IsAdmin
 from rest_framework.decorators import api_view, permission_classes
-
+from rest_framework.pagination import PageNumberPagination
 
 @api_view(['GET'])
 @permission_classes([IsAdmin])
 def odunc_alma_get(request):
     models_odunc=OduncAlmaSistemi.objects.all()
-    deger=OduncAlmaSistemiSeriazlier_list(models_odunc,many=True)
-    return Response({'status':'Tüm veriler getirildi.',
-                     'data':deger.data})
+
+
+    paginator = PageNumberPagination()
+    paginator.page_size = 10
+    result_page = paginator.paginate_queryset(models_odunc, request)
+    
+    deger=OduncAlmaSistemiSeriazlier_list(result_page,many=True)
+    return paginator.get_paginated_response(deger.data)
 
 @api_view(['GET'])
 @permission_classes([IsAdmin])
