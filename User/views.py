@@ -30,6 +30,7 @@ def register(request):
     user = User.objects.create_user(
         username=data['username'],
         password=data['password'],
+        lastname=data['lastname'],
         phone=data.get('phone'),
         relative_id_number=data.get('relative_id_number'),
         role=data.get('role', 'user')
@@ -42,15 +43,16 @@ def register(request):
 @permission_classes([IsAdmin])
 def liste(request):
     users = User.objects.all()
-
+    
     data = []
     for user in users:
         data.append({
             "id": user.id,
             "username": user.username,
-            "phone": user.phone
+            "last_name":user.last_name,
+            "role":user.role
         })
-
+    print(data)
     return Response(data)
 
 

@@ -6,7 +6,7 @@ class IsAdmin(BasePermission):
         if not request.user.is_authenticated:
             raise PermissionDenied("Giriş yapmalısın.")
 
-        if request.user.role != "admin":
+        if getattr(request.user, "role", None) != "admin":
             raise PermissionDenied("Admin yetkin yok.")
 
         return True
