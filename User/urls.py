@@ -6,9 +6,8 @@ urlpatterns = [
     path('list/',views.liste),
     path('login/', TokenObtainPairView.as_view()),
     path('refresh/', TokenRefreshView.as_view()),
-    # path('register/', views.register),
+    path('register/', views.register),
     path('deactive/<int:id>/', views.deactive_user),
-    path('create/', views.create_user_by_admin),
-
+    path('profile/',views.profile)
 ]
 

@@ -21,6 +21,15 @@ class TestUser:
                     "status_code":admin_response.status_code}
         return login_Admin
     
+    @pytest.fixture
+    def login_user_token(self):
+        def user():
+            data={'username':'denaskullanici','password':'iisesmas'}
+            admin_response=requests.post(self.ADMIN_LOGIN,data=data)
+            access=admin_response.json()['access']
+            # print(access)
+            return access
+        return user
 
 
     @pytest.fixture
@@ -61,3 +70,9 @@ class TestUser:
         assert response.json()['status']=='Kullanıcı pasif hale getirildi','Beklenen status kodu gelmedi'
 
 
+    def test_normal_kullanici_giris(self):
+        url=f'{self.BASE}writer/'
+        response=requests.get(url=url)
+        print(response.status_code)
+        for a in response.json()['data']:
+            print(a['name'])

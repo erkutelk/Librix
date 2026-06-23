@@ -11,33 +11,30 @@ from rest_framework.permissions import IsAdminUser
 from django.contrib.auth import get_user_model
 from rest_framework.response import Response
 from User.permissions import IsAdmin
+from .serializer import RegisterSerializer
+from rest_framework.permissions import IsAuthenticated
+
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])#Giriş yapan kullanıcı görsün diyoruz
 def profile(request):
     user = request.user
-
     return Response({
         "username": user.username,
-        "phone": user.phone,
-        "id": user.id
+        "last_name": user.last_name,
+        "phone":str(user.phone),
+        "role":user.role
     })
 
 User = get_user_model()
-# Create your views here.
-@api_view(['POST'])
+@api_view(["POST"])
 def register(request):
-    data = request.data
+    serializer = RegisterSerializer(data=request.data)
 
-    user = User.objects.create_user(
-        username=data['username'],
-        password=data['password'],
-        lastname=data['lastname'],
-        phone=data.get('phone'),
-        relative_id_number=data.get('relative_id_number'),
-        role=data.get('role', 'user')
-    )
+    if serializer.is_valid():
+        serializer.save()
+        return Response({"message": "Kullanıcı oluşturuldu"})
 
-    return Response({"message": "Kullanıcı oluşturuldu"})
-
+    return Response(serializer.errors, status=400)
 
 @api_view(['GET'])
 @permission_classes([IsAdmin])
@@ -65,17 +62,3 @@ def deactive_user(request,id):
     user.save()
     return Response({'status':'Kullanıcı pasif hale getirildi'})
 
-
-@api_view(['POST'])
-@permission_classes([IsAdmin])
-def create_user_by_admin(request):
-    data = request.data
-
-    user = User.objects.create_user(
-        username=data['username'],
-        password=data['password'],
-        phone=data.get('phone'),
-        relative_id_number=data.get('relative_id_number'),
-        role=data.get('role', 'user')
-    )
-    return Response({"message": "Admin kullanıcı oluşturdu"})
