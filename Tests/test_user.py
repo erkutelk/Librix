@@ -56,8 +56,8 @@ class TestUser:
     def test_kullanici_pasife_al(self,login_admin):
         token=login_admin()['access']
         headers={"Authorization": f"Bearer {token}"}
-        response=requests.patch(url=f'{self.USER_DEACTIVE_URL}{12}/',headers=headers)
-        print(response.status_code)
-        print(response.json)
+        response=requests.patch(url=f'{self.USER_DEACTIVE_URL}{12}/'.format(),headers=headers)
+        assert response.status_code==200,'Kullanıcı pasife alınamadı'
+        assert response.json()['status']=='Kullanıcı pasif hale getirildi','Beklenen status kodu gelmedi'
 
 
