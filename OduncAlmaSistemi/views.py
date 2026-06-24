@@ -7,7 +7,8 @@ from User.permissions import IsAdmin
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.pagination import PageNumberPagination
 from django.shortcuts import get_object_or_404
-
+from User.serializer import UserSerializer
+from django.db.models import Q,Count
 @api_view(['GET'])
 @permission_classes([IsAdmin])
 def odunc_alma_get_all(request):
@@ -37,6 +38,18 @@ def odunc_first_id(request,id):
     models_odunc=OduncAlmaSistemi.objects.get(pk=id)
     deger=OduncAlmaSistemiSeriazlier_list(models_odunc)
     return Response({'status':"Değeri getirildi.",'data':deger.data})
+
+@api_view(['GET'])
+def tum_kullanicilar(request):
+    users = UserInfo.objects.annotate(
+        #annotate kullanıcılara ekstra bir bilgi ekliyor, veritabanında bulunmuyor bu değer.
+        bekleyen_kitap_sayisi=Count(
+            'oduncalmasistemi',
+            filter=Q(oduncalmasistemi__teslim_edildi=False)
+        )
+    )
+    serializer = UserSerializer(users, many=True)
+    return Response({"data":serializer.data}, status=200)
 
 @api_view(['PATCH'])
 @permission_classes([IsAdmin])
