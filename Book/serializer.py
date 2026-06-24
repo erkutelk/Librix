@@ -52,20 +52,23 @@ class KitapInfoSerializer_list(serializers.ModelSerializer):
 
 
 class BookListSerializer_list(serializers.ModelSerializer):
-    kategori = serializers.CharField(source="kategori.book_categori")
+    kategori = serializers.CharField(source="kategori.book_categori")#Bu kod kullanıcıya id yerine kategorinin kendisi vermemizi sağlıyor.
     cover_image=serializers.SerializerMethodField()
 
     class Meta:
         model=BookInfo
         fields=['book_name',"barcode","kategori","cover_image","isActive"]
 
-    def get_cover_image(self, obj):
+    def get_cover_image(self, obj):#Baştaki get yukardaki cover_image için kullanıyoruz
         first_image = obj.images.first()  # related_name="images"
 
         if first_image:
             return first_image.resim.url
         return None
 
+
+
+    
 from rest_framework import serializers
 from .models import Writer
         
@@ -168,3 +171,23 @@ class KategoriSerializer_create(serializers.ModelSerializer):
         
         return value
         
+
+
+class BookDetailSerializer(serializers.ModelSerializer):
+    kategori = KategoriSerializer_list()
+    writer_book = WriterBookSerializer_list()
+    images = BookImageSerializer(many=True)
+
+    class Meta:
+        model = BookInfo
+        fields = [
+            "id",
+            "book_name",
+            "book_slug",
+            "barcode",
+            "price",
+            "stock",
+            "kategori",
+            "writer_book",
+            "images"
+        ]

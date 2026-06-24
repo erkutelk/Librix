@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
-from Book.serializer import KitapInfoSerializer_create,KitapInfoSerializer_list,BookListSerializer_list
+from Book.serializer import KitapInfoSerializer_create,KitapInfoSerializer_list,BookListSerializer_list,BookDetailSerializer
 from rest_framework.response import Response
 from Book.models import BookCategori,BookInfo
 from rest_framework import status
@@ -59,7 +59,7 @@ def kitap_sil(request, slug):
 def get_info_book(request,slug):
     try:
         kategori = BookInfo.objects.get(book_slug=slug)
-        serializer = KitapInfoSerializer_list(kategori)
+        serializer = BookDetailSerializer(kategori)
         return Response({'data':serializer.data})
     except BookInfo.DoesNotExist:
         return Response({"message":"Kategori Bulunamadı"},
