@@ -29,8 +29,9 @@ def kullanicilarin_odunc_aldigi_kitaplar(request,user_id):
     oduncler=OduncAlmaSistemi.objects.filter(user=user)
     serializer=OduncAlmaSistemiSeriazlier_list(oduncler,many=True)
     return Response({"user":{"id":user_id,
-                             "username":user.username},
-                             "books":serializer.data})
+                             "username":user.username,
+                             "last_name":user.last_name,
+                             "books":serializer.data}})
 
 @api_view(['GET'])
 @permission_classes([IsAdmin])
@@ -46,8 +47,7 @@ def tum_kullanicilar(request):
         bekleyen_kitap_sayisi=Count(
             'oduncalmasistemi',
             filter=Q(oduncalmasistemi__teslim_edildi=False)
-        )
-    )
+        ))    
     serializer = UserSerializer(users, many=True)
     return Response({"data":serializer.data}, status=200)
 

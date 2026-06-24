@@ -4,7 +4,7 @@ from .models import BookCategori,BookInfo,Writer, BookImage
 class BookImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = BookImage
-        fields = ["id", "resim","isActive"]
+        fields = ["resim"]
 
 
 
