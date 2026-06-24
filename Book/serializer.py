@@ -57,7 +57,7 @@ class BookListSerializer_list(serializers.ModelSerializer):
 
     class Meta:
         model=BookInfo
-        fields=['book_name',"barcode","kategori","cover_image"]
+        fields=['book_name',"barcode","kategori","cover_image","isActive"]
 
     def get_cover_image(self, obj):
         first_image = obj.images.first()  # related_name="images"

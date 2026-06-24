@@ -82,7 +82,7 @@ def get_guncelleme(request,slug):
         return Response({'error':'Silinmes sırasında bir hata meydana geldi'},status=404)
 
 
-@permission_classes([IsAdmin])
+# @permission_classes([IsAdmin])
 @api_view(['GET'])
 def get_all(request):
     menu=BookInfo.objects.all()

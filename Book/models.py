@@ -30,7 +30,8 @@ class BookInfo(models.Model):
     writer_book=models.ForeignKey(Writer,on_delete=models.CASCADE)
     kategori = models.ForeignKey(BookCategori, on_delete=models.CASCADE)
     stock=models.IntegerField(default=1,blank=True)
-
+    isActive=models.BooleanField(default=True)
+    
     def save(self, *args, **kwargs):
         self.book_slug = slugify(unidecode(self.book_name))
         super().save(*args, **kwargs)
