@@ -9,8 +9,8 @@ from rest_framework.pagination import PageNumberPagination
 from django.shortcuts import get_object_or_404
 from User.serializer import UserSerializer
 from django.db.models import Q,Count
+# @permission_classes([IsAdmin])
 @api_view(['GET'])
-@permission_classes([IsAdmin])
 def odunc_alma_get_all(request):
     models_odunc=OduncAlmaSistemi.objects.all()
 
@@ -22,8 +22,8 @@ def odunc_alma_get_all(request):
     deger=OduncAlmaSistemiSeriazlier_list(result_page,many=True)
     return paginator.get_paginated_response(deger.data)
 
+# @permission_classes([IsAdmin])
 @api_view(['GET'])
-@permission_classes([IsAdmin])
 def kullanicilarin_odunc_aldigi_kitaplar(request,user_id):
     user=get_object_or_404(UserInfo,id=user_id)
     oduncler=OduncAlmaSistemi.objects.filter(user=user)

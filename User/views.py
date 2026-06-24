@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from .models import UserInfo
+from OduncAlmaSistemi.models import OduncAlmaSistemi
+from OduncAlmaSistemi.serializer import OduncAlmaSistemiSeriazlier_list
 from .serializer import UserSerializer
 from django.contrib.auth import get_user_model
 from rest_framework.decorators import api_view, permission_classes
@@ -8,6 +10,8 @@ from rest_framework.response import Response
 from User.permissions import IsAdmin
 from .serializer import RegisterSerializer
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.pagination import PageNumberPagination
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])#Giriş yapan kullanıcı görsün diyoruz
@@ -19,6 +23,18 @@ def profile(request):
         "phone":str(user.phone),
         "role":user.role
     })
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])#Giriş yapan kullanıcı görsün diyoruz
+def kullanicinin_aldigi_kitaplar(request):
+    user=request.user
+    models_odunc = OduncAlmaSistemi.objects.filter(user=user.id)
+    paginator = PageNumberPagination()
+    paginator.page_size = 10
+    result_page = paginator.paginate_queryset(models_odunc, request)
+    serializer=OduncAlmaSistemiSeriazlier_list(result_page,many=True)
+    return paginator.get_paginated_response(serializer.data)
+
 
 User = get_user_model()
 @api_view(["POST"])
@@ -44,7 +60,6 @@ def liste(request):
             "last_name":user.last_name,
             "role":user.role
         })
-    print(data)
     return Response(data)
 
 
