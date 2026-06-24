@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
-from Book.serializer import KitapInfoSerializer_create,KitapInfoSerializer_list
+from Book.serializer import KitapInfoSerializer_create,KitapInfoSerializer_list,BookListSerializer_list
 from rest_framework.response import Response
 from Book.models import BookCategori,BookInfo
 from rest_framework import status
@@ -82,12 +82,12 @@ def get_guncelleme(request,slug):
         return Response({'error':'Silinmes sırasında bir hata meydana geldi'},status=404)
 
 
-@api_view(['GET'])
 @permission_classes([IsAdmin])
+@api_view(['GET'])
 def get_all(request):
     menu=BookInfo.objects.all()
     try:
-        serializer = KitapInfoSerializer_list(menu, many=True)
+        serializer = BookListSerializer_list(menu, many=True)
         return Response({'status':'Tüm kitap bilgileri','data':serializer.data})
     except:
         return Response({'status':'Kitap bilgileri getirilirke hata meydana geldi'},status=status.HTTP_204_NO_CONTENT)

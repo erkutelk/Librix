@@ -50,6 +50,22 @@ class KitapInfoSerializer_list(serializers.ModelSerializer):
         model = BookInfo
         fields = ["book_name", "barcode", "kategori", "images"]
 
+
+class BookListSerializer_list(serializers.ModelSerializer):
+    kategori = serializers.CharField(source="kategori.book_categori")
+    cover_image=serializers.SerializerMethodField()
+
+    class Meta:
+        model=BookInfo
+        fields=['book_name',"barcode","kategori","cover_image"]
+
+    def get_cover_image(self, obj):
+        first_image = obj.images.first()  # related_name="images"
+
+        if first_image:
+            return first_image.resim.url
+        return None
+
 from rest_framework import serializers
 from .models import Writer
         
