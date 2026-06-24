@@ -1,15 +1,16 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .models import OduncAlmaSistemi
+from .models import OduncAlmaSistemi,UserInfo
 from .serializer import OduncAlmaSistemiSeriazlier_list,OduncAlmaSistemiCreateSerializer
 from User.permissions import IsAdmin
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.pagination import PageNumberPagination
+from django.shortcuts import get_object_or_404
 
 @api_view(['GET'])
 @permission_classes([IsAdmin])
-def odunc_alma_get(request):
+def odunc_alma_get_all(request):
     models_odunc=OduncAlmaSistemi.objects.all()
 
 
@@ -19,6 +20,16 @@ def odunc_alma_get(request):
     
     deger=OduncAlmaSistemiSeriazlier_list(result_page,many=True)
     return paginator.get_paginated_response(deger.data)
+
+@api_view(['GET'])
+@permission_classes([IsAdmin])
+def kullanicilarin_odunc_aldigi_kitaplar(request,user_id):
+    user=get_object_or_404(UserInfo,id=user_id)
+    oduncler=OduncAlmaSistemi.objects.filter(user=user)
+    serializer=OduncAlmaSistemiSeriazlier_list(oduncler,many=True)
+    return Response({"user":{"id":user_id,
+                             "username":user.username},
+                             "books":serializer.data})
 
 @api_view(['GET'])
 @permission_classes([IsAdmin])
