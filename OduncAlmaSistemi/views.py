@@ -9,7 +9,7 @@ from rest_framework.pagination import PageNumberPagination
 from django.shortcuts import get_object_or_404
 from User.serializer import UserSerializer
 from django.db.models import Q,Count
-# @permission_classes([IsAdmin])
+
 @api_view(['GET'])
 def odunc_alma_get_all(request):
     models_odunc=OduncAlmaSistemi.objects.all()

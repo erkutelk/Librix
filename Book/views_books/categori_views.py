@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
-from Book.serializer import KategoriSerializer_list,KategoriSerializer_create
+from Book.serializer import KategoriSerializer_list,KategoriSerializer_create,KategoriSerializer_details
 from rest_framework.response import Response
 from Book.models import BookCategori
 from rest_framework import status
@@ -17,19 +17,19 @@ def all_categori(request):
     serializer = KategoriSerializer_list(menu, many=True)
     return Response(serializer.data)
 
+# @permission_classes([IsAdmin])
 @api_view(['GET'])
-@permission_classes([IsAdmin])
 def get_categori(request,slug):
     try:
         kategori = BookCategori.objects.get(slug=slug)
-        serializer = KategoriSerializer_list(kategori)
+        serializer = KategoriSerializer_details(kategori)
         return Response(serializer.data)
     except BookCategori.DoesNotExist:
         return Response({"message":"Kategori Bulunamadı"},
                         status=404)
     
+# @permission_classes([IsAdmin])
 @api_view(['POST'])
-@permission_classes([IsAdmin])
 def insert_categori(request):
     """
     POST JSON Örneği:\n
@@ -57,15 +57,15 @@ def insert_categori(request):
 
 from rest_framework.exceptions import NotFound
 
+# @permission_classes([IsAdmin])
 @api_view(['DELETE'])
-@permission_classes([IsAdmin])
 def delete_categori(request, slug):
     try:
         obj = BookCategori.objects.get(slug=slug)
         obj.delete()
         return Response(
             {'message': 'Kategori silindi'},
-            status=status.HTTP_204_NO_CONTENT
+            status=status.HTTP_200_OK
         )
     except BookCategori.DoesNotExist:
         return Response(
@@ -73,8 +73,8 @@ def delete_categori(request, slug):
             status=status.HTTP_404_NOT_FOUND
         )
 
+# @permission_classes([IsAdmin])
 @api_view(['PATCH'])
-@permission_classes([IsAdmin])
 def patch_categori(request, slug):
     """
     POST JSON Örneği:\n

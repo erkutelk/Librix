@@ -47,8 +47,8 @@ def register(request):
 
     return Response(serializer.errors, status=400)
 
+# @permission_classes([IsAdmin])
 @api_view(['GET'])
-@permission_classes([IsAdmin])
 def liste(request):
     users = User.objects.all()
     
@@ -64,8 +64,8 @@ def liste(request):
 
 
 
+# @permission_classes([IsAdmin])
 @api_view(['PATCH'])
-@permission_classes([IsAdmin])
 def deactive_user(request,id):
     user=UserInfo.objects.get(pk=id)
     user.is_active=False

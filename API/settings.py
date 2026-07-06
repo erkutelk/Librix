@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'User',
     'OduncAlmaSistemi',
     'Book',
-    'Reservation'
+    'Reservation',
+    'Admin_Panel'
 ]
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (

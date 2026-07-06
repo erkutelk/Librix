@@ -147,6 +147,11 @@ class KategoriSerializer_list(serializers.ModelSerializer):
         
         return value
         
+class KategoriSerializer_details(serializers.ModelSerializer):
+    class Meta:
+        model = BookCategori
+        fields = '__all__'
+
 
 class KategoriSerializer_create(serializers.ModelSerializer):
     class Meta:

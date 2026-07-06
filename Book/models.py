@@ -20,6 +20,17 @@ class BookCategori(models.Model):
 
     def __str__(self):
         return self.book_categori
+    
+
+class BookCategori_details(models.Model):
+    book_categori = models.CharField(max_length=100)
+    slug = models.SlugField(unique=True, blank=True)
+    categori_isActive = models.BooleanField(default=True)
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(unidecode(self.book_categori))
+        super().save(*args, **kwargs)
+
 
 
 class BookInfo(models.Model):

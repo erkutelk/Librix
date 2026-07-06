@@ -9,6 +9,7 @@ urlpatterns = [
     path('',include('OduncAlmaSistemi.urls')),
     path('',include('Book.urls')),
     path('',include('Reservation.urls')),
+    path('',include('Admin_Panel.urls')),
 
 ]
 
