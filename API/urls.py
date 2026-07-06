@@ -8,6 +8,7 @@ urlpatterns = [
     path('user/',include('User.urls')),
     path('',include('OduncAlmaSistemi.urls')),
     path('',include('Book.urls')),
+    path('',include('Reservation.urls')),
 
 ]
 
