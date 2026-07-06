@@ -1,6 +1,6 @@
 from . import views
 from django.urls import path
-from OduncAlmaSistemi import views
+
 from Book.views_books import writer_views
 from Book.views_books import book_views
 from Book.views_books import categori_views
@@ -28,9 +28,8 @@ urlpatterns = [
     path('book-all/',book_views.get_all,name='book_all'),
 
     #Kullanıcı işlemelri
-    path('list/',views.liste),
-    path('deactive/<int:id>/', views.deactive_user),
-    path('profile/odunc/',views.kullanicinin_aldigi_kitaplar),
+    path('user-list/',views.liste),
+    path('user-deactive/<int:id>/', views.deactive_user),
 
     #Kategori işlemleri
     path('categori-add/',categori_views.insert_categori,name='book_categori_add'),
@@ -38,4 +37,5 @@ urlpatterns = [
     path('categori-update/<slug:slug>/',categori_views.patch_categori,name='categori_patch'),
     path('categori-get/<slug:slug>/',categori_views.get_categori,name='get_categori'),
 
+    #Kullanıcı kendi bilgileriyle girdiğinde görecekleri
 ]

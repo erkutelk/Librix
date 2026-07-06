@@ -32,6 +32,11 @@ class BookCategori_details(models.Model):
         super().save(*args, **kwargs)
 
 
+class BookLanguage(models.Model):
+    language=models.CharField(max_length=25)
+    lang=models.CharField(max_length=5,db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
 
 class BookInfo(models.Model):
     book_name=models.CharField(max_length=100)
@@ -42,7 +47,11 @@ class BookInfo(models.Model):
     kategori = models.ForeignKey(BookCategori, on_delete=models.CASCADE)
     stock=models.IntegerField(default=1,blank=True)
     isActive=models.BooleanField(default=True)
-    
+    description=models.TextField(blank=True,default="")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    language=models.ForeignKey(BookLanguage,on_delete=models.PROTECT)
+
     def save(self, *args, **kwargs):
         self.book_slug = slugify(unidecode(self.book_name))
         super().save(*args, **kwargs)
@@ -56,3 +65,5 @@ class BookImage(models.Model):
 
     resim = models.ImageField(upload_to='Book_image/')
     isActive = models.BooleanField(default=True)
+
+
