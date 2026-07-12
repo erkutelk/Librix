@@ -56,10 +56,11 @@ class KitapInfoSerializer_list(serializers.ModelSerializer):
 class BookListSerializer_list(serializers.ModelSerializer):
     kategori = serializers.CharField(source="kategori.book_categori")#Bu kod kullanıcıya id yerine kategorinin kendisi vermemizi sağlıyor.
     cover_image=serializers.SerializerMethodField()
-
+    language = serializers.CharField(source="language.language", read_only=True)    
+    
     class Meta:
         model=BookInfo
-        fields=['book_name',"barcode","kategori","description","cover_image","isActive"]
+        fields=['book_name',"barcode","kategori","description","cover_image","isActive","language"]
 
     def get_cover_image(self, obj):#Baştaki get yukardaki cover_image için kullanıyoruz
         first_image = obj.images.first()  # related_name="images"
