@@ -22,8 +22,10 @@ class KitapInfoSerializer_create(serializers.ModelSerializer):
             "barcode",
             "price",
             "writer_book",
+            "language",
             "kategori",
             "stock",
+            "description",
             "images"
         ]
 
@@ -57,7 +59,7 @@ class BookListSerializer_list(serializers.ModelSerializer):
 
     class Meta:
         model=BookInfo
-        fields=['book_name',"barcode","kategori","cover_image","isActive"]
+        fields=['book_name',"barcode","kategori","description","cover_image","isActive"]
 
     def get_cover_image(self, obj):#Baştaki get yukardaki cover_image için kullanıyoruz
         first_image = obj.images.first()  # related_name="images"

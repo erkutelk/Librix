@@ -3,7 +3,7 @@ import requests
 
 
 class TestBookInfo:
-    URL = "http://127.0.0.1:8000/book-categori"
+    URL = "http://127.0.0.1:8000"
     GET_ALL = f"{URL}/book-all/"
     GET_POST = f"{URL}/book-add/"
     GET_DELETE = f"{URL}/book-delete/"
@@ -15,18 +15,27 @@ class TestBookInfo:
     def create_book_info(self):
         "Yeni kitap oluşturma fixture"
         import random
-        def _create(book_name="test123",barcode=random.randint(1000,9999),price=12,write="Kitap yazarı test",kategori=1,stock=1,description='description'):
+        def _create(book_name="asdasass",
+                    barcode=random.randint(1000,9999),
+                    price=12,
+                    write=1,
+                    kategori=1,
+                    stock=1,
+                    description='Bur bir açıklama',
+                    language=1):
             data = {
                 "book_name": book_name,
-                "barcode": f'1231{barcode}',
+                "barcode": f"1231{barcode}",
                 "price": price,
+                "writer_book": write,
                 "kategori": kategori,
-                "stock":1,
-                "writer_book_id":1,
-                "description":description
+                "language": language,
+                "stock": stock,
+                "description": description
             }
             try:
                 response = requests.post(url=TestBookInfo.GET_POST,json=data)
+                print(response.json())
                 return response
 
             except Exception as e:
@@ -48,7 +57,7 @@ class TestBookInfo:
         "Yeni bir kitap ekleme"
         VALUE='erkut-elik-deneme'
         add_response=create_book_info(VALUE)
-        delete_response=book_info_delete(VALUE)
+        # delete_response=book_info_delete(VALUE)
 
     def test_kitap_silme(self,create_book_info,book_info_delete):
         'yeni bir kitap ekle ve kitabı sil'
