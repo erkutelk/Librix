@@ -26,23 +26,42 @@ def profile(request):
         "role":user.role
     })
 
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])#Giriş yapan kullanıcı görsün diyoruz
 def kullanicinin_aldigi_kitaplar(request):
-    user=request.user
-    models_odunc = OduncAlmaSistemi.objects.filter(user=user.id)
-    if not models_odunc.exists():
-        return Response(
-            {"message": "Henüz ödünç aldığınız kitap bulunmuyor."},
-            status=status.HTTP_200_OK
-        )
+
+    kitaplar = OduncAlmaSistemi.objects.filter(
+        user=request.user
+    )
+    
+
+    status_filter = request.query_params.get("status")
+
+
+    if status_filter=="all":
+        kitaplar=kitaplar.all()
+
+    if status_filter == "returned":
+        kitaplar = kitaplar.filter(status="returned")
+
+    elif status_filter == "pending":
+        kitaplar = kitaplar.filter(status="pending")
+
     paginator = PageNumberPagination()
     paginator.page_size = 10
-    result_page = paginator.paginate_queryset(models_odunc, request)
-    serializer=OduncAlmaSistemiSeriazlier_list(result_page,many=True)
+
+    result_page = paginator.paginate_queryset(
+        kitaplar,
+        request
+    )
+
+    serializer = OduncAlmaSistemiSeriazlier_list(
+        result_page,
+        many=True
+    )
+
     return paginator.get_paginated_response(serializer.data)
-
-
 User = get_user_model()
 @api_view(["POST"])
 def register(request):

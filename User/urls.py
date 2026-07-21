@@ -8,7 +8,8 @@ urlpatterns = [
     path('refresh/', TokenRefreshView.as_view()),
     path('register/', views.register),
     path('profile/',views.profile),
-    path('profile/odunc-aldigi/',views.kullanicinin_aldigi_kitaplar)
+    # path('profile/odunc-aldigi/',views.kullanicinin_aldigi_kitaplar),
+    path("profile/kitaplarim/", views.kullanicinin_aldigi_kitaplar),
 ]
 
 
