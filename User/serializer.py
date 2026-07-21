@@ -76,3 +76,10 @@ class RegisterSerializer(serializers.ModelSerializer):
         return user
     
 
+{
+"username":"Erkut",
+"last_name":"ELİK",
+"password1":"1234",
+"password2":"1234",
+"phone":"55379240411",
+"relative_id_number":"52586"}

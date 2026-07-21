@@ -37,5 +37,12 @@ urlpatterns = [
     path('categori-update/<slug:slug>/',categori_views.patch_categori,name='categori_patch'),
     path('categori-get/<slug:slug>/',categori_views.get_categori,name='get_categori'),
 
-    #Kullanıcı kendi bilgileriyle girdiğinde görecekleri
+    # Kullanıcı kendi bilgileriyle girdiğinde görecekleri
+    # Tüm kitaplar
+    # kitap arama 
+    # Profil bilgileri
+    # Aldığı kitaplar
+    # Ödünç vereceği kitaplar
+    # Rezarvayon ettiği kitaplar
+    # Tüm kitap bilgileri(Adminden farklı olucak faklrı bir serializer yazılacak)
 ]

@@ -9,6 +9,8 @@ from rest_framework.pagination import PageNumberPagination
 from django.shortcuts import get_object_or_404
 from User.serializer import UserSerializer
 from django.db.models import Q,Count
+from Book.models import BookInfo
+from rest_framework.permissions import IsAuthenticated
 
 @api_view(['GET'])
 def odunc_alma_get_all(request):
@@ -71,14 +73,15 @@ def odunc_alma_guncelleme(request, id):
 
     return Response(serializer.errors)
 
+# @permission_classes([IsAdmin])
 @api_view(['POST'])
-@permission_classes([IsAdmin])
+@permission_classes([IsAuthenticated])
 def odunc_create(request):
     """
     {
         "user": id,
         "book": id,
-        "teslim_edildi": boolen,
+        "status": boolen,
         "verecegi_tarih": "date"
     }
     """

@@ -9,11 +9,7 @@ class BookImageSerializer(serializers.ModelSerializer):
 
 
 class KitapInfoSerializer_create(serializers.ModelSerializer):
-    images = serializers.ListField(
-        child=serializers.ImageField(),
-        write_only=True,
-        required=False
-    )
+    images = serializers.ListField(child=serializers.ImageField(),write_only=True,required=False)
 
     class Meta:
         model = BookInfo
@@ -56,11 +52,11 @@ class KitapInfoSerializer_list(serializers.ModelSerializer):
 class BookListSerializer_list(serializers.ModelSerializer):
     kategori = serializers.CharField(source="kategori.book_categori")#Bu kod kullanıcıya id yerine kategorinin kendisi vermemizi sağlıyor.
     cover_image=serializers.SerializerMethodField()
-    language = serializers.CharField(source="language.language", read_only=True)    
+    language = serializers.CharField(source="language.lang", read_only=True)    
     
     class Meta:
         model=BookInfo
-        fields=['book_name',"barcode","kategori","description","cover_image","isActive","language"]
+        fields=['book_name',"barcode","kategori","cover_image","isActive","language"]
 
     def get_cover_image(self, obj):#Baştaki get yukardaki cover_image için kullanıyoruz
         first_image = obj.images.first()  # related_name="images"
@@ -182,10 +178,11 @@ class KategoriSerializer_create(serializers.ModelSerializer):
 
 
 class BookDetailSerializer(serializers.ModelSerializer):
-    kategori = KategoriSerializer_list()
-    writer_book = WriterBookSerializer_list()
-    images = BookImageSerializer(many=True)
+    writer_book = serializers.SerializerMethodField()#Aşağıda bulunan methodu alır
 
+    kategori = KategoriSerializer_list()
+    images = BookImageSerializer(many=True)
+    
     class Meta:
         model = BookInfo
         fields = [
@@ -195,7 +192,10 @@ class BookDetailSerializer(serializers.ModelSerializer):
             "barcode",
             "price",
             "stock",
-            "kategori",
             "writer_book",
+            "kategori",
             "images"
         ]
+
+    def get_writer_book(self,obj):
+        return f"{obj.writer_book.name} {obj.writer_book.surname}"

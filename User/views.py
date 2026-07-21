@@ -11,6 +11,7 @@ from User.permissions import IsAdmin
 from .serializer import RegisterSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
+from rest_framework import status
 
 
 @api_view(['GET'])
@@ -21,6 +22,7 @@ def profile(request):
         "username": user.username,
         "last_name": user.last_name,
         "phone":str(user.phone),
+        "mail":user.email,
         "role":user.role
     })
 
@@ -29,6 +31,11 @@ def profile(request):
 def kullanicinin_aldigi_kitaplar(request):
     user=request.user
     models_odunc = OduncAlmaSistemi.objects.filter(user=user.id)
+    if not models_odunc.exists():
+        return Response(
+            {"message": "Henüz ödünç aldığınız kitap bulunmuyor."},
+            status=status.HTTP_200_OK
+        )
     paginator = PageNumberPagination()
     paginator.page_size = 10
     result_page = paginator.paginate_queryset(models_odunc, request)
