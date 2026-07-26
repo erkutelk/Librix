@@ -13,7 +13,14 @@ class TestBookInfo:
 
     @pytest.fixture
     def create_book_info(self):
-        "Yeni kitap oluşturma fixture"
+        '''Yeni kitap oluşturma fixturebook_name\n
+        barcode\n
+        price\n
+        write\n
+        kategori\n
+        stock\n
+        description\n
+        language'''
         import random
         def _create(book_name="asdasass",
                     barcode=random.randint(1000,9999),
