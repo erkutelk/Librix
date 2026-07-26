@@ -1,104 +1,76 @@
 import pytest
-import requests
-
+from random import randint
 
 class TestApi:
+    random_category_name=randint(1,999)
+    def test_kategori_ekle_sil(self,create_category,delete_category):
+        category_name = f"erkut{TestApi.random_category_name}"
+        response=create_category(category_name)
+        slug=response.json()['data']['book_categori']
+        assert response.status_code==201
 
-    URL = "http://127.0.0.1:8000/book-categori/"
-    KATEGORI_EKLE_URL = f"{URL}categori-add/"
-    KATEGOR_SIL = f"{URL}categori-delete/"
-    KATEGORI_GUNCELLE = f"{URL}categori-update/"
 
-    @pytest.fixture
-    def create_category(self):
-        def _create(test_value="erkut", durum=True):
-            data = {
-                "book_categori": test_value,
-                "categori_isActive": durum
-            }
-            response=requests.post(url=self.KATEGORI_EKLE_URL, json=data)
-            print('Kategori Eklendi',test_value)
-            return response
+        delete_category=delete_category(slug)
+        assert delete_category.status_code==200
+        
+    def test_ayni_kategoriyi_ekleme(self,create_category,delete_category):
+        data=create_category("erkut")
+        response=create_category("erkut")
 
-        return _create
+        assert response.status_code==400
+        assert (
+            response.json()['error']['book_categori'][0]
+            ==
+            "Aynı kategori adında bir kategori mevcut"
+        )
+        delete_category("erkut")
+        delete_category("erkut")
 
-    @pytest.fixture
-    def delete_category(self):
-        def _delete(test_value):
-            url = f"{self.KATEGOR_SIL}{test_value}/"
-            response = requests.delete(url)
-            return response
 
-        return _delete
 
-    def test_kategori_duzenle(self,create_category,delete_category):
-        '''Eklenen bir kategoriyi silmek ve güncellemek'''
-        ornek_veri='erkut_elik'
-        create_response=create_category(ornek_veri)
+    def test_olmayan_kategori_silme(self,delete_category):
+        response=delete_category("olmayan")
+        assert response.status_code==404
+        assert response.json()['error']=="Kategori bulunamadı"
 
-        slug_ = create_response.json()
-        url = f"{self.KATEGORI_GUNCELLE}{ornek_veri}/"
 
-        data = {
-            "book_categori": "naberererer"
-        }
 
-        response = requests.patch(url=url, json=data)
-        assert response.status_code == 200
-
-        delete_category('naberererer')
-
-    def test_eklenen_kategoriyi_sil(self, create_category, delete_category):
-        '''Kategoriye eklenen değer başarıli bir şeklde siliniyor mu?'''
-        ekle=create_category("erkut")
-        response = delete_category("erkut")
-        print('Eklenen değer',ekle.status_code)
-        print('silinen değer',response.status_code)
-        assert response.status_code in [201,200,204]
-
-    def test_ayni_kategoriyi_tekrar_ekleme(self,create_category,delete_category):
-        '''Kategoyiye aynı isimde bir kategori ekleme'''
-        first_value=create_category('erkut')
-        last_value=create_category('erkut')
-        assert last_value.json()['error']['book_categori'][0]=="Aynı kategori adında bir kategori mevcut"
-        assert last_value.status_code==400
-        delete=delete_category('erkut')
-
-    def test_olmayan_kategoriyi_silme(self,delete_category):
-        '''Eğer bir kategori mevcut olmadığı halde silmeye çalışırsa kullanıcı bu hatayı versin'''
-        last_value=delete_category('olmaayan_deger')
-
-        assert last_value.json()['error']=='Kategori bulunamadı',last_value.json()
-        assert last_value.status_code==404,last_value.json()
-
-    @pytest.mark.parametrize('kategori_name,' \
-    'is_active,' \
-    'expected_status,' \
-    'mesaj', [
-        ('isim', True, 201,'Basariyla Eklendi'),
-        ('deneme', True, 201,'Basariyla Eklendi'),
-        ('',True,400,'Bu alan boş bırakılmamalı.'),
-        ('    ',True,400,'Bu alan boş bırakılmamalı.')
-    ])
-    def test_kategori_ekle_coklu(self,kategori_name,is_active,expected_status,mesaj,create_category,delete_category):
+    @pytest.mark.parametrize(
+        "kategori_name,expected_status,mesaj",
+        [
+            ("isim",201,"Basariyla Eklendi"),
+            ("deneme",201,"Basariyla Eklendi"),
+            ("",400,"Bu alan boş bırakılmamalı."),
+            ("    ",400,"Bu alan boş bırakılmamalı.")
+        ]
+    )
+    def test_kategori_ekleme(self,kategori_name,expected_status,mesaj,create_category,delete_category):
         response=create_category(kategori_name)
         body=response.json()
-        # assert response.json()==mesaj
-
+        assert response.status_code==expected_status
         if response.status_code==201:
-            assert "data" in body
             assert body['status']==mesaj
             delete_category(kategori_name)
-        else:
-            assert "error" in body
-            assert body['error']['book_categori'][0]==mesaj
-            delete_category(kategori_name)
-            
-        
-        # delete_category(kategori_name)
-        # assert kategori_name==response.json()['error']['book_categori'][0]
 
-    def test_kategori_ekle_emoji_kontrol(self,create_category):
-        response=create_category('😊😊😊😊😊🙋‍♂️🙋‍♂️🙋‍♂️')
-        assert response.json()['error']['book_categori'][0]=='Kategori emojilerden oluşamaz'
+        else:
+            assert body['error']['book_categori'][0]==mesaj
+
+
+
+    def test_emoji_kontrol(
+        self,
+        create_category
+    ):
+
+        response=create_category(
+            "😊😊😊😊"
+        )
+
+
         assert response.status_code==400
+
+        assert (
+            response.json()['error']['book_categori'][0]
+            ==
+            "Kategori emojilerden oluşamaz"
+        )
