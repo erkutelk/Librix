@@ -10,7 +10,7 @@ class TestWrite:
 
     @pytest.fixture
     def add_method(self):
-        def create(name=str,surname=str,isActive=bool):
+        def create(name=str,surname=str,isActive=True):
             data={
                 "name":name,
                 "surname":surname,

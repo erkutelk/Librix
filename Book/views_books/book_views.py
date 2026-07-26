@@ -37,8 +37,8 @@ def kitap_ekle(request):
     }, status=status.HTTP_400_BAD_REQUEST)
 
 
+# @permission_classes([IsAdmin])
 @api_view(['DELETE'])
-@permission_classes([IsAdmin])
 def kitap_sil(request, slug):
     try:
         obj = BookInfo.objects.get(book_slug=slug)

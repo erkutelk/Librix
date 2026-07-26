@@ -14,6 +14,7 @@ class KitapInfoSerializer_create(serializers.ModelSerializer):
     class Meta:
         model = BookInfo
         fields = [
+            "book_slug",
             "book_name",
             "barcode",
             "price",
