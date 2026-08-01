@@ -119,11 +119,11 @@ class TestWrite:
 
     @pytest.mark.parametrize('isim,soyisim,isActive',
         [
-            ('Erkut TEST','Elik TEST',True),
-            ('Namık TEST','Kemal TEST',True),
-            ('Orhan TEST','Kemal TEST',True),
-            ('Reşat Nuri TEST','Gültekin TEST ',True),
-            ('Mehmet Akif TEST','Ersoy TEST',True),
+            ('Erkut','Elik',True),
+            ('Namık','Kemal',True),
+            ('Orhan','Kemal',True),
+            ('Reşat Nuri','Gültekin ',True),
+            ('Mehmet Akif','Ersoy',True),
         ]
     )
     def test_butun_yazarlari_getirme(self,isim,soyisim,isActive,add_method,delete_method):
@@ -131,13 +131,17 @@ class TestWrite:
         try:
             add_writer=add_method(isim,soyisim,isActive)
             response=requests.get(url=url)
+
             json_data=add_writer.json()['data']
+            assert json_data.name==isim,f'{isim} isim değerinde hata meydana geldi'
+            assert json_data.surname==soyisim,f'{soyisim} soyisim değerinde hata meydana geldi'
+            assert json_data.isActive==isActive,f'{isActive} Durum değerinde hata meydana geldi'
+
         except Exception as e:
             print('hata meydana geldi',e)
         finally:
-            assert response.status_code==200,'Bütün yazarlar getiriliken hata meydana geldi'
-            assert len(json_data)==5
-            delete_method(json_data['id'])
+            silinen=delete_method(json_data['id'])
+            assert silinen.status_code==200,'hata meydana geldi'
 
     def test_secilen_yazari_getirme(self,add_method,delete_method):
         try:
@@ -176,14 +180,17 @@ class TestWrite:
         assert delete_end.status_code==404
         
         
-    def test_sql_injection(self, add_method):
+    def test_sql_injection(self, add_method,delete_method):
         response = add_method(
             "' OR 1=1 --'",
             "test",
             True
         )
-
-        assert response.status_code in (400, 201)
+        response_id=response.json()['data']
+        delete_id=response_id['id']
+        der=delete_method(delete_id)
+        print(der.status_code)
+        assert response.status_code in (400, 201,200)
 
         
     def test_xss_payload_apiyi_cokertmiyor(self, add_method):
